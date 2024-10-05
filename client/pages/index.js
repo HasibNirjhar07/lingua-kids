@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { FaApple, FaStar, FaSearch } from 'react-icons/fa';
+import { FaApple, FaStar, FaSearch, FaRocket, FaTree, FaBook, FaPencilAlt, FaGraduationCap } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 
 const typewriterTexts = [
-  "Start Learning Today!",
-  "Grow with Knowledge",
-  "Achieve Your Dreams",
+  "Learn and Have Fun!",
+  "Explore New Worlds!",
+  "Make New Friends!",
 ];
 
 export default function WelcomeBackPage() {
@@ -38,7 +38,7 @@ export default function WelcomeBackPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-700 text-white overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-300 via-green-400 to-blue-500 text-indigo-900 overflow-hidden font-comic">
       {/* Navbar */}
       <motion.nav
         initial={{ y: -100 }}
@@ -46,21 +46,28 @@ export default function WelcomeBackPage() {
         transition={{ duration: 0.5 }}
         className="container mx-auto px-6 py-4 flex justify-between items-center"
       >
-        <motion.div whileHover={{ scale: 1.1 }} className="text-2xl font-bold">
+        <motion.div whileHover={{ scale: 1.1 }} className="text-3xl font-bold text-indigo-900">
+          <FaBook className="inline-block mr-2" />
           LinguaKids
         </motion.div>
         <div className="hidden md:flex space-x-8">
-          {['Home', 'Join us', 'Our service', 'Contact us'].map((item, index) => (
+          {[
+            { text: 'Home', icon: FaTree },
+            { text: 'Join us', icon: FaRocket },
+            { text: 'Our service', icon: FaPencilAlt },
+            { text: 'Contact us', icon: FaGraduationCap }
+          ].map((item, index) => (
             <motion.a
-              key={item}
+              key={item.text}
               href="#"
-              className="hover:text-indigo-200"
+              className="hover:text-indigo-700 flex items-center"
               whileHover={{ scale: 1.1 }}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              {item}
+              <item.icon className="mr-2" />
+              {item.text}
             </motion.a>
           ))}
         </div>
@@ -72,10 +79,10 @@ export default function WelcomeBackPage() {
         >
           <input
             type="text"
-            placeholder="Search"
-            className="bg-indigo-400/50 rounded-full py-2 px-4 pr-10 w-64 focus:outline-none focus:ring-2 focus:ring-white"
+            placeholder="Search for fun!"
+            className="bg-white/50 rounded-full py-2 px-4 pr-10 w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-indigo-900 placeholder-indigo-700"
           />
-          <FaSearch className="absolute right-3 top-3 text-white/70" />
+          <FaSearch className="absolute right-3 top-3 text-indigo-700" />
         </motion.div>
       </motion.nav>
 
@@ -87,11 +94,11 @@ export default function WelcomeBackPage() {
           transition={{ duration: 0.5 }}
           className="md:w-1/2 mb-12 md:mb-0"
         >
-           <motion.div
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="mb-8 text-6xl h-8" // Set a fixed height
+            className="mb-8 text-6xl h-20 text-indigo-900 font-bold" // Increased height
           >
             {currentText}
           </motion.div>
@@ -99,7 +106,7 @@ export default function WelcomeBackPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-6xl font-bold mb-4"
+            className="text-6xl font-bold mb-4 text-indigo-900"
           >
             Welcome Back To School!
           </motion.h1>
@@ -107,19 +114,18 @@ export default function WelcomeBackPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-4xl font-bold mb-6"
+            className="text-4xl font-bold mb-6 text-indigo-800"
           >
-            2023 Students
+            2023 Adventurers
           </motion.h2>
-          {/* Typewriter effect in a separate div */}
-         
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleRegisterClick}
-            className="bg-yellow-500 text-white font-bold py-3 px-8 rounded-full hover:bg-yellow-600 transition duration-300"
+            className="bg-indigo-600 text-white font-bold py-3 px-8 rounded-full hover:bg-indigo-700 transition duration-300 flex items-center"
           >
-            Register Now
+            <FaRocket className="mr-2" />
+            Start Your Adventure!
           </motion.button>
         </motion.div>
         <motion.div
@@ -130,27 +136,39 @@ export default function WelcomeBackPage() {
         >
           <motion.img
             src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExZjZzbGtnZ3ozd2NiZHhreHJ6b24yMjViNjN2ajl1a21jeGdzMXVoaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Ia6pcGj7fhE1Is3OFM/giphy.webp"
-            alt="Students"
+            alt="Happy Students"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
+            
           />
         </motion.div>
       </main>
 
-      {/* Footer Icon */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="absolute bottom-6 right-6"
-      >
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-        >
-          <FaStar className="text-yellow-300 text-5xl" />
-        </motion.div>
-      </motion.div>
+      {/* Footer Icons */}
+      <div className="absolute bottom-6 right-6 flex space-x-4">
+        {[FaStar, FaApple, FaPencilAlt].map((Icon, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 + index * 0.1 }}
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            >
+              <Icon className="text-indigo-900 text-4xl" />
+            </motion.div>
+          </motion.div>
+        ))}
+      </div>
+
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+        .font-comic {
+          font-family: 'Comic Neue', cursive;
+        }
+      `}</style>
     </div>
   );
 }

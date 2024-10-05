@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
+import { FaEnvelope, FaLock, FaRocket, FaStar, FaMoon, FaSun } from 'react-icons/fa';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -26,53 +27,56 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-purple-500 to-blue-500">
+    <div className="flex min-h-screen bg-gradient-to-br from-yellow-300 to-blue-400">
       <motion.div
         className="w-full max-w-md flex flex-col items-center justify-center p-8 mx-auto"
         initial={{ opacity: 0, x: -100 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-5xl font-bold text-white mb-4">Sign Up</h1>
-        <p className="text-white mb-8 text-center">
-          Join us to start your journey! Create your account now.
+        <h1 className="text-5xl font-bold text-indigo-800 mb-4 font-comic">Join the Adventure!</h1>
+        <p className="text-indigo-700 mb-8 text-center font-comic">
+          Create your magical account and start your journey!
         </p>
         {error && (
-          <p className="text-red-500 text-sm text-center mb-4 font-semibold">{error}</p>
+          <p className="text-red-500 text-sm text-center mb-4 font-semibold font-comic">{error}</p>
         )}
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full bg-gradient-to-br from-purple-100 to-blue-100">
-          <div className="mb-4">
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-3xl shadow-lg w-full bg-gradient-to-br from-pink-100 to-blue-100 border-4 border-indigo-400">
+          <div className="mb-4 relative">
+            <FaEnvelope className="absolute top-3 left-3 text-indigo-400" size={20} />
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Your Magical Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 placeholder-gray-500"
+              className="w-full p-3 pl-10 border-2 border-indigo-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-400 transition duration-200 placeholder-indigo-400 font-comic text-indigo-700"
               aria-label="Email"
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-4 relative">
+            <FaLock className="absolute top-3 left-3 text-indigo-400" size={20} />
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Secret Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 placeholder-gray-500"
+              className="w-full p-3 pl-10 border-2 border-indigo-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-400 transition duration-200 placeholder-indigo-400 font-comic text-indigo-700"
               aria-label="Password"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white p-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
+            className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white p-3 rounded-full shadow-md hover:from-yellow-500 hover:to-orange-600 transition duration-200 font-comic text-lg font-bold flex items-center justify-center"
           >
-            Sign Up
+            <FaRocket className="mr-2" />
+            Start Your Adventure!
           </button>
-          <p className="text-center text-sm mt-4">
-            Already have an account?{' '}
-            <a href="/login" className="text-blue-500 hover:underline">
-              Log In
+          <p className="text-center text-indigo-600 mt-4 font-comic">
+            Already on the journey?{' '}
+            <a href="/login" className="text-yellow-600 hover:underline font-bold">
+              Log In Here
             </a>
           </p>
         </form>
@@ -80,17 +84,38 @@ const Signup = () => {
 
       {/* Right Side Image */}
       <motion.div
-        className="w-1/2 flex items-center justify-center hidden md:flex"
+        className="w-1/2 flex items-center justify-center hidden md:flex relative"
         initial={{ opacity: 0, x: 100 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
         <img
-          src="—Pngtree—cartoon start school season flying_5765912.gif" // Replace with the path to your image
+          src="—Pngtree—cartoon start school season flying_5765912.gif"
           alt="Illustration"
-          className="max-w-lg h-auto" // Set max width for the image
+          className="max-w-lg h-auto"
         />
+        <motion.div
+          className="absolute top-10 right-10"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        >
+          <FaSun className="text-yellow-400" size={48} />
+        </motion.div>
+        <motion.div
+          className="absolute bottom-10 left-10"
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <FaMoon className="text-indigo-400" size={36} />
+        </motion.div>
       </motion.div>
+
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+        .font-comic {
+          font-family: 'Comic Neue', cursive;
+        }
+      `}</style>
     </div>
   );
 };
