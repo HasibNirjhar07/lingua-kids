@@ -3,21 +3,92 @@ import { FaHome, FaBook, FaChartLine, FaCog, FaPlay, FaHeadphones, FaBookOpen, F
 import { motion } from 'framer-motion';
 import { CircularProgress } from "@nextui-org/progress";
 
+import { useRouter } from 'next/router';
+
 const Dashboard = () => {
-  const [progress, setProgress] = useState(67); // Example progress
-  const [games, setGames] = useState([]);
-  const [newGame, setNewGame] = useState('');
-  const [user, setUser] = useState({ name: 'Danish Colt', points: 90, notifications: 5 });
+//   const [progress, setProgress] = useState(67); // Example progress
+//   const [games, setGames] = useState([]);
+//   const [newGame, setNewGame] = useState('');
+
 
   useEffect(() => {
     // Fetch data if needed (games, user info, etc.)
   }, []);
 
-  const handleAddGame = (e) => {
-    e.preventDefault();
-    setGames([...games, { id: games.length + 1, name: newGame }]);
-    setNewGame('');
+
+
+//   const [user, setUser] = useState(null);
+  const [user, setUser] = useState({ name: 'Danish Colt', points: 90, notifications: 5 });
+  const [games, setGames] = useState([]); // State to hold favorite games
+  const [newGame, setNewGame] = useState(''); // State to hold new game name
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+      const token = localStorage.getItem('token'); // Move token definition here
+      if (!token) {
+          router.push('/login'); // Redirect to login if no token
+          return;
+      }
+
+      const fetchUserInfo = async () => {
+          const response = await fetch('http://localhost:3000/auth/dashboard', {
+              method: 'GET',
+              headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+              setUser(data.user); // Set user information
+              fetchFavoriteGames(token); // Pass token to fetchFavoriteGames
+          } else {
+              setError(data.error);
+              router.push('/login'); // Redirect to login if unauthorized
+          }
+      };
+
+      const fetchFavoriteGames = async (token) => { // Accept token as parameter
+          const response = await fetch('http://localhost:3000/auth/games', {
+              method: 'GET',
+              headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+              setGames(data.games); // Set favorite games
+          } else {
+              console.error(data.error);
+          }
+      };
+
+      fetchUserInfo(); // Fetch user info on component mount
+  }, [router]);
+
+  const handleAddGame = async (e) => {
+      e.preventDefault();
+
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:3000/auth/games', {
+          method: 'POST',
+          headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name: newGame }), // Send the new game name
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+          setGames([...games, data.game]); // Add the new game to the state
+          setNewGame(''); // Clear the input
+      } else {
+          setError(data.error);
+      }
   };
+
+  if (error) {
+      return <p>Error: {error}</p>;
+  }
 
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-blue-200 to-yellow-300">
@@ -49,9 +120,9 @@ const Dashboard = () => {
 
         {/* Today's Progress */}
         <div className="mt-auto flex items-center flex-col text-white">
-          <CircularProgress variant="determinate" value={progress} size={80} thickness={5} />
+          <CircularProgress variant="determinate" value={70} size={80} thickness={5} />
           <p className="mt-4">Today's Progress</p>
-          <p className="text-lg font-bold">{progress}% of 100</p>
+          <p className="text-lg font-bold">{70}% of 100</p>
         </div>
       </motion.div>
 
@@ -59,7 +130,7 @@ const Dashboard = () => {
       <div className="flex-1 p-6 lg:p-10">
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-center mb-8">
-          <h1 className="text-3xl lg:text-4xl font-bold text-blue-600 font-fun">Hi {user.name}!</h1>
+          <h1 className="text-3xl lg:text-4xl font-bold text-blue-600 font-fun">Hi {user.email}!</h1>
           <div className="flex items-center text-lg space-x-4">
             <div className="text-blue-500">🔔 {user.notifications}</div>
             <div className="text-blue-500">💎 {user.points}</div>
