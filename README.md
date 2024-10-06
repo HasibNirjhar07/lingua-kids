@@ -29,7 +29,7 @@
 To start using LinguaKids, follow these steps:
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/yourusername/LinguaKids.git
+   git clone https://github.com/HasibNirjhar07/LinguaKids.git
    ```
 2. Install dependencies:
    ```bash
