@@ -1,6 +1,4 @@
-Here's the copy-paste version of the LinguaKids README:
 
----
 
 # LinguaKids: Interactive Language Learning for Children
 
@@ -67,4 +65,4 @@ This project is licensed under the MIT License.
 
 ---
 
-You can copy and paste this directly into your README file on GitHub.
+
