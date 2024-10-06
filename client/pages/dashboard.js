@@ -20,63 +20,67 @@ const Dashboard = () => {
 
     const fetchUserInfo = async () => {
       const response = await fetch('http://localhost:3000/auth/dashboard', {
-          method: 'GET',
-          headers: { Authorization: `Bearer ${token}` },
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.json();
       if (response.ok) {
-          setUser(data.user); // Set user information
-          fetchFavoriteGames(token); // Pass token to fetchFavoriteGames
+        setUser(data.user);
+        fetchFavoriteGames(token);
       } else {
-          setError(data.error);
-          router.push('/login'); // Redirect to login if unauthorized
+        setError(data.error);
+        router.push('/login');
       }
-  };
+    };
 
-  const fetchFavoriteGames = async (token) => { // Accept token as parameter
+    const fetchFavoriteGames = async (token) => {
       const response = await fetch('http://localhost:3000/auth/games', {
-          method: 'GET',
-          headers: { Authorization: `Bearer ${token}` },
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.json();
       if (response.ok) {
-          setGames(data.games); // Set favorite games
+        setGames(data.games);
       } else {
-          console.error(data.error);
+        console.error(data.error);
       }
-  };
+    };
 
-  fetchUserInfo(); // Fetch user info on component mount
-}, [router]);
+    fetchUserInfo();
+  }, [router]);
 
-const handleAddGame = async (e) => {
-  e.preventDefault();
+  const handleAddGame = async (e) => {
+    e.preventDefault();
 
-  const token = localStorage.getItem('token');
-  const response = await fetch('http://localhost:3000/auth/games', {
+    const token = localStorage.getItem('token');
+    const response = await fetch('http://localhost:3000/auth/games', {
       method: 'POST',
       headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name: newGame }), // Send the new game name
-  });
+      body: JSON.stringify({ name: newGame }),
+    });
 
-  const data = await response.json();
-  if (response.ok) {
-      setGames([...games, data.game]); // Add the new game to the state
-      setNewGame(''); // Clear the input
-  } else {
+    const data = await response.json();
+    if (response.ok) {
+      setGames([...games, data.game]);
+      setNewGame('');
+    } else {
       setError(data.error);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Remove the token from localStorage
+    router.push('/login'); // Redirect to the login page
+  };
+
+  if (error) {
+    return <p>Error: {error}</p>;
   }
-};
-
-if (error) {
-  return <p>Error: {error}</p>;
-}
-
 
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
@@ -108,6 +112,14 @@ if (error) {
           ))}
         </nav>
 
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="mt-8 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold w-full"
+        >
+          Logout
+        </button>
+
         {/* Today's Progress */}
         <div className="mt-auto flex items-center flex-col text-white">
           <CircularProgress 
@@ -134,8 +146,8 @@ if (error) {
           </div>
         </div>
 
-        {/* Today's Plan */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+           {/* Today's Plan */}
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {/* Listening */}
           <motion.div
             className="bg-gradient-to-br from-yellow-400 to-yellow-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300"
