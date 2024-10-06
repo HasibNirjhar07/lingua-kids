@@ -3,7 +3,62 @@ import { FaHome, FaBook, FaChartLine, FaCog, FaPlay, FaHeadphones, FaBookOpen, F
 import { motion } from 'framer-motion';
 import { CircularProgress } from "@nextui-org/progress";
 import { useRouter } from 'next/router';
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
+
+const AnimatedProgressBar = ({ value }) => {
+  const circumference = 2 * Math.PI * 45; // 45 is the radius of the circle
+
+  return (
+    <div className="relative w-40 h-40">
+      <svg className="w-full h-full" viewBox="0 0 100 100">
+        {/* Background circle */}
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="none"
+          stroke="#e6e6e6"
+          strokeWidth="10"
+        />
+        {/* Animated progress circle */}
+        <motion.circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="none"
+          stroke="#FFD700"
+          strokeWidth="10"
+          strokeLinecap="round"
+          initial={{ strokeDasharray: circumference, strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: circumference - (value / 100) * circumference }}
+          transition={{ duration: 1, ease: "easeInOut" }}
+        />
+        {/* Animated stars */}
+        {[0, 1, 2, 3].map((index) => (
+          <motion.path
+            key={index}
+            d="M10 0l3.09 6.26L20 7.27l-5 4.87 1.18 6.88L10 15.4l-6.18 3.62L5 12.14 0 7.27l6.91-1.01L10 0z"
+            fill="#FFD700"
+            initial={{ scale: 0, x: 40, y: 40 }}
+            animate={{ scale: 1, x: 50 + 35 * Math.cos(index * Math.PI / 2), y: 50 + 35 * Math.sin(index * Math.PI / 2) }}
+            transition={{ delay: 1 + index * 0.2, duration: 0.5, type: "spring" }}
+          />
+        ))}
+      </svg>
+      {/* Percentage text */}
+      <motion.div
+        className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-yellow-300"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 1.5, type: "spring", stiffness: 200, damping: 10 }}
+      >
+        {value}%
+      </motion.div>
+    </div>
+  );
+};
 const Dashboard = () => {
   const [user, setUser] = useState({ name: 'Danish Colt', points: 90, notifications: 5 });
   const [games, setGames] = useState([]);
@@ -121,18 +176,33 @@ const Dashboard = () => {
         </button>
 
         {/* Today's Progress */}
-        <div className="mt-auto flex items-center flex-col text-white">
-          <CircularProgress 
-            aria-label="Loading..." 
-            size="lg" 
-            value={70} 
-            color="warning"
-            showValueLabel={true}
-          />
-          <p className="mt-4 text-xl">Today's Progress</p>
-          <p className="text-2xl font-bold text-yellow-300">70% of 100</p>
-        </div>
+        <motion.div 
+          className="mt-auto flex items-center flex-col text-white"
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <AnimatedProgressBar value={70} />
+          <motion.p 
+            className="mt-4 text-xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2 }}
+          >
+            Today's Progress
+          </motion.p>
+          <motion.p 
+            className="text-2xl font-bold text-yellow-300"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.2 }}
+          >
+            70% of 100
+          </motion.p>
+        </motion.div>
       </motion.div>
+
+     
 
       {/* Main Content */}
       <div className="flex-1 p-8 lg:p-12 overflow-y-auto">
