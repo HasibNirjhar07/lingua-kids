@@ -33,10 +33,16 @@ To start using LinguaKids, follow these steps:
    ```
 2. Install dependencies:
    ```bash
+   cd server
+   npm install
+   cd client
    npm install
    ```
-3. Run the development server:
+3. Run the server:
    ```bash
+   cd server
+   npm run dev
+   cd client
    npm run dev
    ```
 
