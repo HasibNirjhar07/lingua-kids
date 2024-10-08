@@ -2,12 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap");
 
 body {
-  font-family: 'Comic Neue', cursive, sans-serif; /* Fun font for kids */
+  font-family: "Comic Neue", cursive, sans-serif; /* Fun font for kids */
 }
 
 .font-fun {
-  font-family: 'Comic Neue', cursive, sans-serif; /* Apply fun font to headings */
+  font-family: "Comic Neue", cursive, sans-serif; /* Apply fun font to headings */
+}
+
+@keyframes glow {
+  from {
+    filter: drop-shadow(0px 0px 10px yellow);
+  }
+  to {
+    filter: drop-shadow(0px 0px 10px orange);
+  }
 }
