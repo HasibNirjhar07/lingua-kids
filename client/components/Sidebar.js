@@ -86,8 +86,10 @@ const Sidebar = () => {
     router.push("/login");
   };
 
+  
+
   const menuItems = [
-    { name: "Home", icon: FaHome },
+    { name: "Home", icon: FaHome , href: "/dashboard"},
     { name: "Training", icon: FaBook },
     { name: "Progress", icon: FaChartLine },
     { name: "Settings", icon: FaCog },

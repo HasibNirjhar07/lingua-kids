@@ -18,6 +18,8 @@ import Sidebar from "@/components/Sidebar";
 
 import "react-circular-progressbar/dist/styles.css";
 
+import ReadingManualPage from "./Reading/readingfrontpage";
+
 const Dashboard = () => {
   const [user, setUser] = useState({
     name: "Danish Colt",
@@ -139,6 +141,7 @@ const Dashboard = () => {
 
           {/* Reading */}
           <motion.div
+
             className="bg-gradient-to-br from-pink-400 to-pink-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300"
             whileHover={{ scale: 1.05, rotate: 3 }}
           >
@@ -146,6 +149,8 @@ const Dashboard = () => {
             <h2 className="text-3xl font-bold text-white mb-2">Reading</h2>
             <p className="text-white text-xl">1290 Characters</p>
             <motion.button
+
+              onClick={() => router.push("/Reading/readingfrontpage")}
               className="mt-6 bg-white text-pink-500 px-6 py-3 rounded-full text-xl font-bold hover:bg-pink-500 hover:text-white transition duration-300"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
