@@ -6,6 +6,7 @@ const cors = require('cors');
 const db = require('./db');
 const authRoutes = require('./routes/auth');
 const cookieParser = require('cookie-parser');
+const readingTestRoutes = require('./routes/readingTest');
 
 //app.use(cors());
 app.use(cors({
@@ -14,6 +15,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use('/auth', authRoutes); 
+app.use('/reading', readingTestRoutes);
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 

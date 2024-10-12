@@ -1,33 +1,43 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '@/components/Sidebar';
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 
 const ReadingManualPage = () => {
   const [showInstructions, setShowInstructions] = useState(true);
+  const router = useRouter();
 
-    const router = useRouter();
- 
+  const handleStart = async () => {
+    try {
+      const token = localStorage.getItem('token'); // Retrieve the token from local storage
+      const response = await fetch('http://localhost:3000/reading/random', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`, // Include the token in the request headers
+          'Content-Type': 'application/json',
+        },
+      });
 
-  const handleStart = () => {
-    setShowInstructions(false);
-    // Add logic here to start the activity (e.g., navigate to the reading page)
+      if (response.ok) {
+        const passage = await response.json();
+        // Navigate to the reading page with the fetched passage id
+        router.push(`/Reading/${passage.id}`); // Assuming passage has an id property
+      } else {
+        console.error('Failed to fetch a random passage', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching passage:', error);
+    }
   };
 
   const handleBackToDashboard = () => {
-    router.push("/dashboard");
-
-
-
+    router.push('/dashboard');
   };
 
   return (
-    <div className=" flex min-h-screen  bg-purple-600 ">
-      {/* Sidebar on the left */}
+    <div className="flex min-h-screen bg-purple-600">
       <Sidebar />
-
-      {/* Main content in the center */}
-      <div className=" flex-1 p-8 lg:p-12 overflow-y-auto flex items-center justify-center">
+      <div className="flex-1 p-8 lg:p-12 overflow-y-auto flex items-center justify-center">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -82,17 +92,7 @@ const ReadingManualPage = () => {
                 Back to Dashboard
               </motion.button>
             </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-center"
-            >
-              <p className="text-xl mb-4">Get ready to read an amazing story!</p>
-              <p className="text-lg">Your adventure begins now...</p>
-            </motion.div>
-          )}
+          ) : null}
         </motion.div>
       </div>
     </div>
