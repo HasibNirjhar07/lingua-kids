@@ -18,6 +18,9 @@ import Sidebar from "@/components/Sidebar";
 
 import "react-circular-progressbar/dist/styles.css";
 
+ 
+
+
 import ReadingManualPage from "./Reading/readingfrontpage";
 
 const Dashboard = () => {
