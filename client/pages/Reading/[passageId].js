@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Timer from '../../components/timer';
 import confetti from 'canvas-confetti';
-import { FaBook, FaQuestion, FaCheckCircle, FaTimesCircle, FaPaperPlane, FaStar, FaTrophy, FaClock } from 'react-icons/fa';
-import Modal from '../../components/Modal'; // Import custom Modal component
+import { FaBook, FaQuestion, FaCheckCircle, FaTimesCircle, FaPaperPlane, FaStar, FaTrophy, FaClock, FaRocket, FaDragon } from 'react-icons/fa';
+import Modal from '../../components/Modal';
 
 const PassagePage = () => {
     const router = useRouter();
@@ -50,7 +50,7 @@ const PassagePage = () => {
     };
 
     const handleSubmitAnswers = async () => {
-        setIsTimerRunning(false);  // Stop the timer
+        setIsTimerRunning(false);
         const endTime = Date.now();
         const timeTakenInSeconds = Math.floor((endTime - startTime) / 1000);
         setTimeTaken(timeTakenInSeconds);
@@ -75,14 +75,12 @@ const PassagePage = () => {
             if (response.ok) {
                 const result = await response.json();
                 setCorrectAnswers(result.correctAnswers);
-                setSuccessMessage('Great job! Your answers have been submitted successfully!');
+                setSuccessMessage('Woohoo! You did it, young adventurer!');
                 confetti({
                     particleCount: 100,
                     spread: 70,
                     origin: { y: 0.6 }
                 });
-
-                // Show modal after submission
                 setShowModal(true);
             } else {
                 const errorData = await response.json();
@@ -100,54 +98,54 @@ const PassagePage = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
-        router.push('/dashboard');  // Redirect to dashboard
+        router.push('/dashboard');
     };
 
     if (!passage) return (
-        <div className="flex items-center justify-center h-screen">
-            <FaBook className="animate-spin text-6xl text-blue-500" />
-            <p className="ml-4 text-2xl">Loading your adventure...</p>
+        <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+            <FaDragon className="animate-bounce text-8xl text-yellow-300 mb-4" />
+            <p className="text-3xl font-bold text-white">Summoning your magical quest...</p>
         </div>
     );
 
     return (
-        <div className="p-8 bg-gradient-to-r from-purple-100 to-pink-100 min-h-screen">
-            <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-xl p-8 animate-fadeIn">
+        <div className="p-8 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 min-h-screen">
+            <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-2xl p-8 animate-fadeIn">
                 <h1 className="text-4xl font-bold text-purple-600 mb-4 flex items-center">
-                    <FaBook className="mr-2" />
+                    <FaBook className="mr-2 text-yellow-500" />
                     {passage.title}
                 </h1>
                 <Timer duration={600} onTimeUp={handleTimeUp} isRunning={isTimerRunning} />
-                <div className="mt-6 p-4 bg-yellow-50 rounded-lg border-2 border-yellow-200">
-                    <p className="text-lg leading-relaxed">{passage.content}</p>
+                <div className="mt-6 p-6 bg-yellow-100 rounded-2xl border-4 border-yellow-300 shadow-inner">
+                    <p className="text-xl leading-relaxed">{passage.content}</p>
                 </div>
 
                 {questions.length > 0 && (
                     <div className="mt-8">
-                        <h2 className="text-3xl font-semibold text-blue-600 mb-4 flex items-center">
-                            <FaQuestion className="mr-2" />
-                            Quest Time!
+                        <h2 className="text-3xl font-bold text-blue-600 mb-4 flex items-center">
+                            <FaQuestion className="mr-2 text-green-500" />
+                            Magic Quiz Time!
                         </h2>
                         <ul className="space-y-6">
-                            {questions.map((question) => (
-                                <li key={question.id} className="bg-blue-50 p-4 rounded-lg animate-bounceIn">
-                                    <p className="font-medium text-xl mb-2 flex items-center">
+                            {questions.map((question, index) => (
+                                <li key={question.id} className="bg-gradient-to-r from-green-200 to-blue-200 p-6 rounded-2xl animate-bounceIn shadow-lg">
+                                    <p className="font-bold text-2xl mb-4 flex items-center text-purple-700">
                                         <FaStar className="mr-2 text-yellow-400" />
-                                        {question.text}
+                                        Question {index + 1}: {question.text}
                                     </p>
-                                    <ul className="space-y-2">
+                                    <ul className="space-y-4">
                                         {['1', '2'].map((optionId) => (
                                             <li key={optionId} className="ml-4">
-                                                <label className="flex items-center space-x-2 cursor-pointer">
+                                                <label className="flex items-center space-x-3 cursor-pointer bg-white p-3 rounded-xl hover:bg-blue-100 transition duration-200">
                                                     <input
                                                         type="radio"
                                                         name={`question-${question.id}`}
                                                         value={optionId}
                                                         checked={selectedAnswers[question.id] === optionId}
                                                         onChange={() => handleOptionChange(question.id, optionId)}
-                                                        className="form-radio text-purple-600 h-5 w-5"
+                                                        className="form-radio text-purple-600 h-6 w-6"
                                                     />
-                                                    <span className="text-lg flex items-center">
+                                                    <span className="text-xl flex items-center font-semibold">
                                                         {selectedAnswers[question.id] === optionId ? (
                                                             <FaCheckCircle className="mr-2 text-green-500" />
                                                         ) : (
@@ -167,44 +165,43 @@ const PassagePage = () => {
 
                 <button 
                     onClick={handleSubmitAnswers} 
-                    className="mt-8 bg-green-500 text-white px-6 py-3 rounded-full text-xl font-bold shadow-lg hover:bg-green-600 transform hover:scale-105 transition duration-200 ease-in-out flex items-center justify-center"
+                    className="mt-8 bg-gradient-to-r from-green-400 to-blue-500 text-white px-8 py-4 rounded-full text-2xl font-bold shadow-lg hover:from-green-500 hover:to-blue-600 transform hover:scale-105 transition duration-200 ease-in-out flex items-center justify-center"
                     disabled={isTimeUp || !isTimerRunning}
                 >
-                    <FaPaperPlane className="mr-2" />
-                    {isTimeUp ? "Time's up!" : "Submit Your Quest"}
+                    <FaRocket className="mr-3 animate-pulse" />
+                    {isTimeUp ? "Time's up, brave hero!" : "Launch Your Answers!"}
                 </button>
 
                 {successMessage && (
-                    <div className="mt-4 text-green-600 font-bold text-xl animate-bounce flex items-center justify-center">
-                        <FaCheckCircle className="mr-2" />
+                    <div className="mt-6 text-green-600 font-bold text-2xl animate-bounce flex items-center justify-center bg-green-100 p-4 rounded-full">
+                        <FaCheckCircle className="mr-3 text-3xl" />
                         {successMessage}
                     </div>
                 )}
             </div>
 
-            {/* Custom Modal */}
             <Modal isOpen={showModal} onClose={handleCloseModal}>
-                <div className="text-center">
-                    <h2 className="text-3xl font-semibold mb-4">Quest Results</h2>
-                    <div className="flex flex-col items-center space-y-4">
-                        <div className="flex items-center">
-                            <FaTrophy className="text-yellow-400 text-4xl mr-2" />
-                            <span className="text-2xl font-bold">
+                <div className="text-center bg-gradient-to-r from-purple-300 via-pink-300 to-red-300 p-8 rounded-3xl">
+                    <h2 className="text-4xl font-bold mb-6 text-purple-800">Your Magical Results!</h2>
+                    <div className="flex flex-col items-center space-y-6">
+                        <div className="flex items-center bg-white p-4 rounded-full shadow-lg">
+                            <FaTrophy className="text-yellow-500 text-5xl mr-4" />
+                            <span className="text-3xl font-bold text-purple-700">
                                 {correctAnswers} out of {questions.length} correct
                             </span>
                         </div>
-                        <div className="flex items-center">
-                            <FaClock className="text-blue-500 text-4xl mr-2" />
-                            <span className="text-2xl font-bold">
-                                Time taken: {Math.floor(timeTaken / 60)}m {timeTaken % 60}s
+                        <div className="flex items-center bg-white p-4 rounded-full shadow-lg">
+                            <FaClock className="text-blue-500 text-5xl mr-4" />
+                            <span className="text-3xl font-bold text-purple-700">
+                                Time: {Math.floor(timeTaken / 60)}m {timeTaken % 60}s
                             </span>
                         </div>
                     </div>
                     <button 
-                        className="mt-6 bg-red-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-red-600 transition"
+                        className="mt-8 bg-gradient-to-r from-red-400 to-pink-500 text-white px-6 py-3 rounded-full text-xl font-bold hover:from-red-500 hover:to-pink-600 transition transform hover:scale-105"
                         onClick={handleCloseModal}
                     >
-                        Close and Go to Dashboard
+                        Back to Your Quest Map!
                     </button>
                 </div>
             </Modal>
