@@ -21,3 +21,29 @@ body {
   }
 }
 
+@keyframes twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes rocket {
+  0% { transform: translate(-100%, 100%); }
+  100% { transform: translate(200%, -200%); }
+}
+
+.animate-twinkle {
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-rocket {
+  animation: rocket 15s linear infinite;
+}

@@ -22,7 +22,9 @@ const SpeakingFrontPage = () => {
   }, []);
 
   const handleStart = () => {
-    console.log('Starting the speaking task');
+
+    router.push('/Speaking/record');
+    
   };
 
   const handleBackToDashboard = () => {
