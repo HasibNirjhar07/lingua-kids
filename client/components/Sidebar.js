@@ -218,7 +218,7 @@ const Sidebar = () => {
         className="lg:hidden fixed top-4 left-4 text-indigo z-20"
         onClick={toggleMobileMenu}
       >
-        <FaBars className="text-3xl" />
+        <FaBars className="text-3xl text-indigo-700" />
       </button>
     </div>
   );

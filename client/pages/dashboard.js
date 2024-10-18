@@ -204,6 +204,7 @@ const Dashboard = () => {
   <p className="text-white text-xl">10 Phrases</p>
   
   <motion.button
+    onClick={() => router.push("/Speaking/speakingfrontpage")}
     className="mt-6 bg-white text-green-600 px-6 py-3 rounded-full text-xl font-bold hover:bg-green-500 hover:text-white transition duration-300"
     whileHover={{ scale: 1.1 }}
     whileTap={{ scale: 0.9 }}
