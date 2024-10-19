@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaHome, FaBook, FaChartLine, FaCog, FaBars } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
@@ -76,8 +76,20 @@ const Sidebar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
 
+  // Load the collapsed state from local storage
+  useEffect(() => {
+    const storedState = localStorage.getItem("sidebarCollapsed");
+    if (storedState) {
+      setIsCollapsed(JSON.parse(storedState));
+    }
+  }, []);
+
   const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
+    setIsCollapsed((prevState) => {
+      const newState = !prevState;
+      localStorage.setItem("sidebarCollapsed", JSON.stringify(newState)); // Save new state to local storage
+      return newState;
+    });
   };
 
   const toggleMobileMenu = () => {
