@@ -17,9 +17,9 @@ const features = [
 ];
 
 const testimonials = [
-  { name: "Emily", feedback: "IELTSPlay makes learning fun and exciting!" },
-  { name: "Michael", feedback: "I improved my English so much with this app!" },
-  { name: "Sophia", feedback: "The interactive exercises are awesome!" },
+  { name: "Alvee", feedback: "LinguaKids makes learning fun and exciting!" },
+  { name: "Dipto", feedback: "I improved my English so much with this app!" },
+  { name: "Mehedi", feedback: "The interactive exercises are awesome!" },
 ];
 
 export default function WelcomeBackPage() {
