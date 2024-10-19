@@ -4,11 +4,17 @@ import {
   FaTree,
   FaRocket,
   FaPencilAlt,
-  FaGraduationCap,
   FaSearch,
 } from "react-icons/fa";
 
 const Navbar = () => {
+  const handleScrollToSection = (id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div className="bg-gradient-to-tl from-yellow-300 via-green-400 to-blue-500 overflow-hidden font-comic">
       <motion.nav
@@ -26,15 +32,14 @@ const Navbar = () => {
         </motion.div>
         <div className="hidden md:flex space-x-8">
           {[
-            { text: "Home", icon: FaTree },
-            { text: "Join us", icon: FaRocket },
-            { text: "Our service", icon: FaPencilAlt },
-            { text: "Contact us", icon: FaGraduationCap },
+            { text: "Features", icon: FaTree, id: "features" },
+            { text: "Testimonials", icon: FaRocket, id: "testimonials" },
+            { text: "Fun Facts", icon: FaPencilAlt, id: "fun-facts" },
           ].map((item, index) => (
             <motion.a
               key={item.text}
-              href="#"
-              className="hover:text-indigo-700 flex items-center"
+              onClick={() => handleScrollToSection(item.id)}
+              className="hover:underline text-white flex items-center cursor-pointer"
               whileHover={{ scale: 1.1 }}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -45,6 +50,7 @@ const Navbar = () => {
             </motion.a>
           ))}
         </div>
+
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
