@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Sidebar from '@/components/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaBook, FaRocket, FaClock, FaQuestionCircle, FaArrowLeft, FaPlay, FaMagic, FaGlasses, FaLightbulb } from 'react-icons/fa';
+import { FaBook, FaClock, FaQuestionCircle, FaArrowLeft, FaPlay, FaMagic, FaGlasses, FaLightbulb } from 'react-icons/fa';
 
-const ReadingManualPage = () => {
+const ReadingFrontPage = () => {
   const [currentTip, setCurrentTip] = useState(0);
   const router = useRouter();
   const tips = [
-    "Take your time to understand each sentence!",
-    "Look out for glowing words - they're important!",
-    "Try to visualize the story in your mind.",
-    "Have fun and enjoy the adventure!"
+    "Take your time to understand each sentence.",
+    "Pay attention to context clues for better comprehension.",
+    "Visualize the story elements to enhance engagement.",
+    "Reflect on the main ideas after completing each section."
   ];
 
   useEffect(() => {
@@ -48,90 +48,64 @@ const ReadingManualPage = () => {
   };
 
   return (
-    <div className="flex flex-row min-h-screen bg-gradient-to-br from-purple-400 to-pink-500">
+    <div className="flex flex-row min-h-screen bg-gradient-to-r from-yellow-100 via-pink-100 to-blue-100">
       <Sidebar />
-      <div className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
+      <div className="flex-1 p-8 overflow-y-auto">
         <motion.div
-          initial={{ scale: 0.9, opacity: 0, y: 50 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white shadow-lg rounded-3xl p-8 max-w-3xl mx-auto text-center relative overflow-hidden"
+          className="max-w-4xl mx-auto"
         >
-          <motion.div
-            className="absolute top-0 left-0 w-full h-2 bg-rainbow-gradient"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-          />
-
-          <motion.h1
-            className="text-4xl font-bold text-purple-600 mb-6 flex items-center justify-center"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
+          {/* Title and Intro */}
+          <motion.div 
+            className="bg-white rounded-lg shadow-lg mb-8 p-8 border-l-8 border-blue-500"
+            whileHover={{ boxShadow: "0 6px 8px -2px rgba(0, 0, 0, 0.2)", y: -5 }}
+            transition={{ duration: 0.3 }}
           >
-            <FaBook className="mr-2 text-yellow-500" size={36} />
-            Reading Adventure Time!
-          </motion.h1>
-
-          <motion.p
-            className="text-gray-600 mb-8 text-lg"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            Embark on an epic journey through a fantastical story! 🚀
-          </motion.p>
-
-          <motion.div
-            className="bg-purple-100 p-4 rounded-xl mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-          >
-            <h2 className="text-xl font-semibold text-purple-700 mb-2">How to Play:</h2>
-            <ul className="text-left text-purple-600 list-disc list-inside">
-              <li>Read through an exciting passage</li>
-              <li>Watch for glowing words - they're magical clues!</li>
-              <li>Answer questions about your adventure</li>
-              <li>Complete the quest before time runs out</li>
+            <h1 className="text-4xl font-extrabold text-purple-700 flex items-center mb-6">
+              <FaBook className="mr-3 text-yellow-400 animate-bounce" size={40} />
+              Reading Fun Time!
+            </h1>
+            <p className="text-gray-700 mb-6 text-lg leading-relaxed font-semibold">
+              Get ready to explore an exciting passage that will make your imagination fly!
+            </p>
+            <h2 className="text-xl font-bold text-indigo-600 mb-4">What you'll do:</h2>
+            <ul className="list-disc list-inside text-gray-700 mb-6 space-y-2">
+              <li>Read an engaging story full of adventure</li>
+              <li>Find hidden clues and exciting ideas</li>
+              <li>Answer fun questions about the story</li>
+              <li>Beat the clock and complete the exercise!</li>
             </ul>
           </motion.div>
 
-          <div className="flex justify-center space-x-12 mb-8">
-            <motion.div
-              className="text-center"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.8, type: 'spring', stiffness: 200 }}
-            >
-              <p className="text-sm text-purple-500 font-semibold">TIME FOR QUEST</p>
-              <div className="flex items-center justify-center text-2xl font-bold text-purple-700">
-                <FaClock className="mr-2 text-green-500" />
-                15 minutes
-              </div>
-            </motion.div>
-            <motion.div
-              className="text-center"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.9, type: 'spring', stiffness: 200 }}
-            >
-              <p className="text-sm text-purple-500 font-semibold">CHALLENGES</p>
-              <div className="flex items-center justify-center text-2xl font-bold text-purple-700">
-                <FaQuestionCircle className="mr-2 text-pink-500" />
-                15
-              </div>
-            </motion.div>
+          {/* Info Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {[
+              { icon: FaClock, title: "Time Limit", value: "15 mins", color: "text-green-500" },
+              { icon: FaQuestionCircle, title: "Questions", value: "15 total", color: "text-blue-500" },
+              { icon: FaGlasses, title: "Difficulty", value: "Adjustable", color: "text-pink-500" }
+            ].map((item, index) => (
+              <motion.div 
+                key={index} 
+                className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center border-t-4 border-blue-400"
+                whileHover={{ y: -5, scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+              >
+                <item.icon className={`${item.color} mb-3 animate-spin`} size={32} />
+                <p className="text-sm font-medium text-gray-500">{item.title}</p>
+                <p className="text-xl font-bold text-gray-800">{item.value}</p>
+              </motion.div>
+            ))}
           </div>
 
-          <motion.div
-            className="bg-yellow-100 p-4 rounded-xl mb-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
+          {/* Tip Section */}
+          <motion.div 
+            className="bg-white rounded-lg shadow-lg mb-8 p-6 border-r-8 border-yellow-500"
+            whileHover={{ boxShadow: "0 6px 8px -2px rgba(0, 0, 0, 0.2)", y: -5 }}
+            transition={{ duration: 0.3 }}
           >
-            <h3 className="text-lg font-semibold text-yellow-700 mb-2">Magical Tips:</h3>
+            <h2 className="text-xl font-bold text-blue-600 mb-4">Reading Tips</h2>
             <AnimatePresence mode="wait">
               <motion.p
                 key={currentTip}
@@ -139,63 +113,61 @@ const ReadingManualPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
-                className="text-yellow-600"
+                className="text-gray-700 text-lg font-semibold"
               >
                 {tips[currentTip]}
               </motion.p>
             </AnimatePresence>
           </motion.div>
 
-          <div className="flex justify-between w-full mt-6">
+          {/* Buttons */}
+          <div className="flex justify-between">
             <motion.button
-              className="bg-gray-200 text-gray-700 py-3 px-6 rounded-full hover:bg-gray-300 transition flex items-center"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               onClick={handleBackToDashboard}
+              className="px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors flex items-center"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <FaArrowLeft className="mr-2" /> Return to Quest Hub
+              <FaArrowLeft className="mr-2 animate-spin" size={18} /> Back to Dashboard
             </motion.button>
             <motion.button
-              className="bg-gradient-to-r from-purple-400 to-pink-500 text-white py-3 px-8 rounded-full transition flex items-center"
               onClick={handleStart}
-              whileHover={{ scale: 1.05, boxShadow: '0px 0px 8px rgb(168, 85, 247)' }}
+              className="px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center"
+              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
-              Start Adventure <FaPlay className="ml-2" />
+              Start Reading <FaPlay className="ml-2 animate-pulse" size={18} />
             </motion.button>
           </div>
 
+          {/* Footer Icons */}
           <motion.div
-            className="mt-8 flex justify-center space-x-4"
+            className="mt-12 flex justify-center space-x-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.2 }}
+            transition={{ delay: 0.5 }}
           >
-            <motion.div whileHover={{ scale: 1.1 }} className="text-center">
-              <FaMagic size={24} className="text-purple-500 mx-auto" />
-              <p className="text-sm text-gray-600">Magical Words</p>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.1 }} className="text-center">
-              <FaGlasses size={24} className="text-blue-500 mx-auto" />
-              <p className="text-sm text-gray-600">Engaging Stories</p>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.1 }} className="text-center">
-              <FaLightbulb size={24} className="text-yellow-500 mx-auto" />
-              <p className="text-sm text-gray-600">Boost Comprehension</p>
-            </motion.div>
+            {[
+              { icon: FaMagic, color: "text-purple-500", text: "Magic Words" },
+              { icon: FaGlasses, color: "text-blue-500", text: "Story Detective" },
+              { icon: FaLightbulb, color: "text-yellow-500", text: "Idea Master" }
+            ].map((item, index) => (
+              <motion.div 
+                key={index}
+                whileHover={{ y: -5, scale: 1.05 }} 
+                className="text-center bg-white p-4 rounded-lg shadow-lg"
+              >
+                <item.icon size={32} className={`${item.color} mx-auto mb-2`} />
+                <p className="text-sm font-semibold text-gray-700">{item.text}</p>
+              </motion.div>
+            ))}
           </motion.div>
         </motion.div>
       </div>
-
-      <style jsx>{`
-        .bg-rainbow-gradient {
-          background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #8b00ff);
-        }
-      `}</style>
     </div>
   );
 };
 
-ReadingManualPage.hideNavbar = true;
+ReadingFrontPage.hideNavbar = true;
 
-export default ReadingManualPage;
+export default ReadingFrontPage;

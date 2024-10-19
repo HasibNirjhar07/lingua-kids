@@ -52,42 +52,44 @@ const RecordPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
+    <div className="min-h-screen flex bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 relative overflow-hidden">
       {/* Sidebar */}
-      <Sidebar className="w-64 h-screen bg-gray-800 text-white p-4" />
+      {/* <Sidebar className="w-64 h-screen bg-gray-800 text-white p-4" /> */}
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col p-8 relative overflow-hidden">
+      <div className="flex-1 flex flex-col items-center justify-center p-8 relative z-10">
         {/* Static background elements */}
         <div className="absolute inset-0 overflow-hidden">
-          {[...Array(20)].map((_, i) => (
+          {/* Stars */}
+          {[...Array(30)].map((_, i) => (
             <FaStar key={`star-${i}`} className="text-yellow-300 absolute animate-twinkle" style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
               fontSize: `${Math.random() * 20 + 10}px`,
             }} />
           ))}
-          {[...Array(5)].map((_, i) => (
+          {/* Clouds */}
+          {[...Array(8)].map((_, i) => (
             <FaCloud key={`cloud-${i}`} className="text-white absolute animate-float" style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              fontSize: `${Math.random() * 50 + 30}px`,
+              fontSize: `${Math.random() * 70 + 30}px`,
             }} />
           ))}
-          <FaRocket className="text-red-500 absolute animate-rocket" style={{ fontSize: '40px' }} />
+          <FaRocket className="text-red-500 absolute animate-rocket" style={{ fontSize: '60px', left: '80%', top: '10%' }} />
         </div>
 
         <motion.div 
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="max-w-3xl mx-auto bg-white rounded-3xl shadow-2xl p-8 relative z-10"
+          className="max-w-3xl w-full bg-white rounded-3xl shadow-2xl p-8 relative z-10"
         >
           <motion.h1 
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="text-4xl font-bold text-purple-600 mb-4 flex items-center justify-center"
+            className="text-4xl font-bold text-purple-600 mb-6 flex items-center justify-center"
           >
             <FaMicrophone className="mr-2 text-yellow-500" />
             Speak Like a Star!
@@ -124,7 +126,7 @@ const RecordPage = () => {
                   whileHover={{ scale: 1.1, rotate: 3 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={handleStartRecording}
-                  className="bg-gradient-to-r from-green-400 to-blue-500 text-white px-6 py-3 rounded-full text-xl font-bold flex items-center shadow-lg"
+                  className="bg-gradient-to-r from-green-400 to-blue-500 text-white px-8 py-4 rounded-full text-xl font-bold flex items-center shadow-lg"
                 >
                   <FaMicrophone className="mr-2" /> Start Your Magic!
                 </motion.button>
@@ -137,7 +139,7 @@ const RecordPage = () => {
                   whileHover={{ scale: 1.1, rotate: 3 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={handleStopRecording}
-                  className="bg-gradient-to-r from-red-400 to-pink-500 text-white px-6 py-3 rounded-full text-xl font-bold flex items-center shadow-lg"
+                  className="bg-gradient-to-r from-red-400 to-pink-500 text-white px-8 py-4 rounded-full text-xl font-bold flex items-center shadow-lg"
                 >
                   <FaStopCircle className="mr-2" /> Finish Your Spell!
                 </motion.button>
@@ -151,7 +153,7 @@ const RecordPage = () => {
                     whileHover={{ scale: 1.1, rotate: 3 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={handlePlayRecording}
-                    className="bg-gradient-to-r from-purple-400 to-indigo-500 text-white px-6 py-3 rounded-full text-xl font-bold flex items-center shadow-lg"
+                    className="bg-gradient-to-r from-purple-400 to-indigo-500 text-white px-8 py-4 rounded-full text-xl font-bold flex items-center shadow-lg"
                   >
                     <FaPlayCircle className="mr-2" /> Hear Your Magic!
                   </motion.button>
@@ -162,7 +164,7 @@ const RecordPage = () => {
                     whileHover={{ scale: 1.1, rotate: 3 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={handleSubmit}
-                    className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-full text-xl font-bold flex items-center shadow-lg"
+                    className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-8 py-4 rounded-full text-xl font-bold flex items-center shadow-lg"
                   >
                     <FaPaperPlane className="mr-2" /> Send Your Magic!
                   </motion.button>
@@ -222,3 +224,4 @@ const RecordPage = () => {
 RecordPage.hideNavbar = true;
 
 export default RecordPage;
+
