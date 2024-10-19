@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Sidebar from '@/components/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaMicrophone, FaClock, FaQuestionCircle, FaArrowLeft, FaPlay, FaVolumeUp, FaBookOpen, FaSmile } from 'react-icons/fa';
+import { FaMicrophone, FaClock, FaQuestionCircle, FaArrowLeft, FaPlay, FaVolumeUp, FaBookOpen, FaUsers } from 'react-icons/fa';
 
 const SpeakingFrontPage = () => {
   const [currentTip, setCurrentTip] = useState(0);
   const router = useRouter();
   const tips = [
-    "Speak clearly and confidently!",
-    "Take deep breaths to stay calm.",
-    "Listen carefully to the questions.",
-    "Have fun and do your best!"
+    "Enunciate clearly and maintain a steady pace.",
+    "Take deep breaths to manage nerves and maintain composure.",
+    "Listen attentively to each question before responding.",
+    "Approach the exercise with confidence and a positive attitude."
   ];
 
   useEffect(() => {
@@ -22,101 +22,69 @@ const SpeakingFrontPage = () => {
   }, []);
 
   const handleStart = () => {
-
     router.push('/Speaking/record');
-    
   };
 
   const handleBackToDashboard = () => {
     router.push('/dashboard');
   };
 
-
   return (
-    <div className="flex flex-row min-h-screen bg-gradient-to-br from-blue-400 to-green-500">
+    <div className="flex flex-row min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       <Sidebar />
       <div className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
         <motion.div
-          initial={{ scale: 0.9, opacity: 0, y: 50 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white shadow-lg rounded-3xl p-8 max-w-3xl mx-auto text-center relative overflow-hidden"
+          className="max-w-4xl mx-auto"
         >
-          <motion.div
-            className="absolute top-0 left-0 w-full h-2 bg-rainbow-gradient"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-          />
-
-          <motion.h1
-            className="text-4xl font-bold text-indigo-600 mb-6 flex items-center justify-center"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
+          <motion.div 
+            className="bg-white rounded-lg shadow-lg mb-6 p-6 border-l-4 border-blue-500"
+            whileHover={{ boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+            transition={{ duration: 0.2 }}
           >
-            <FaMicrophone className="mr-2 text-yellow-500" size={36} />
-            Let's Speak!
-          </motion.h1>
-
-          <motion.p
-            className="text-gray-600 mb-8 text-lg"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            Get ready to read fun sentences out loud! 🎉
-          </motion.p>
-
-          <motion.div
-            className="bg-blue-100 p-4 rounded-xl mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-          >
-            <h2 className="text-xl font-semibold text-blue-700 mb-2">How to Play:</h2>
-            <ul className="text-left text-blue-600 list-disc list-inside">
-              <li>You'll see a sentence on the screen</li>
-              <li>Read it out loud when you're ready</li>
-              <li>Speak clearly into your microphone</li>
-              <li>Try to finish before the timer runs out</li>
+            <h1 className="text-3xl font-semibold text-indigo-800 flex items-center mb-4">
+              <FaMicrophone className="mr-2 text-pink-500" size={28} />
+              Speaking Assessment
+            </h1>
+            <p className="text-indigo-600 mb-4">
+              Welcome to the speaking assessment. You'll be presented with a series of sentences to read aloud. This exercise is designed to evaluate your pronunciation, fluency, and overall speaking skills.
+            </p>
+            <h2 className="text-xl font-semibold text-indigo-700 mb-2">Instructions:</h2>
+            <ul className="list-disc list-inside text-indigo-600 mb-4">
+              <li>You will be shown one sentence at a time</li>
+              <li>Read each sentence aloud clearly when you're ready</li>
+              <li>Ensure your microphone is functioning properly</li>
+              <li>Complete each sentence within the allotted time</li>
             </ul>
           </motion.div>
 
-          <div className="flex justify-center space-x-12 mb-8">
-            <motion.div
-              className="text-center"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.8, type: 'spring', stiffness: 200 }}
-            >
-              <p className="text-sm text-indigo-500 font-semibold">TIME PER QUESTION</p>
-              <div className="flex items-center justify-center text-2xl font-bold text-indigo-700">
-                <FaClock className="mr-2 text-green-500" />
-                20 seconds
-              </div>
-            </motion.div>
-            <motion.div
-              className="text-center"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.9, type: 'spring', stiffness: 200 }}
-            >
-              <p className="text-sm text-indigo-500 font-semibold">QUESTIONS</p>
-              <div className="flex items-center justify-center text-2xl font-bold text-indigo-700">
-                <FaQuestionCircle className="mr-2 text-pink-500" />
-                5
-              </div>
-            </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {[
+              { icon: FaClock, title: "Time per Question", value: "20 seconds", color: "bg-green-100 border-green-500" },
+              { icon: FaQuestionCircle, title: "Total Questions", value: "5", color: "bg-yellow-100 border-yellow-500" },
+              { icon: FaUsers, title: "Difficulty Level", value: "Intermediate", color: "bg-pink-100 border-pink-500" }
+            ].map((item, index) => (
+              <motion.div 
+                key={index} 
+                className={`rounded-lg shadow-md p-4 flex flex-col items-center justify-center ${item.color} border-l-4`}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+              >
+                <item.icon className="text-indigo-600 mb-2" size={24} />
+                <p className="text-sm font-medium text-indigo-700">{item.title}</p>
+                <p className="text-xl font-bold text-indigo-800">{item.value}</p>
+              </motion.div>
+            ))}
           </div>
 
-          <motion.div
-            className="bg-yellow-100 p-4 rounded-xl mb-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
+          <motion.div 
+            className="bg-white rounded-lg shadow-lg mb-6 p-6 border-l-4 border-purple-500"
+            whileHover={{ boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+            transition={{ duration: 0.2 }}
           >
-            <h3 className="text-lg font-semibold text-yellow-700 mb-2">Helpful Tips:</h3>
+            <h2 className="text-xl font-semibold text-purple-800 mb-4">Helpful Tips</h2>
             <AnimatePresence mode="wait">
               <motion.p
                 key={currentTip}
@@ -124,65 +92,37 @@ const SpeakingFrontPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
-                className="text-yellow-600"
+                className="text-purple-600"
               >
                 {tips[currentTip]}
               </motion.p>
             </AnimatePresence>
           </motion.div>
 
-          <div className="flex justify-between w-full mt-6">
+          <div className="flex justify-between">
             <motion.button
-              className="bg-gray-200 text-gray-700 py-3 px-6 rounded-full hover:bg-gray-300 transition flex items-center"
-              
+              onClick={handleBackToDashboard}
+              className="px-4 py-2 border border-indigo-300 rounded-md text-indigo-700 hover:bg-indigo-100 transition-colors flex items-center"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleBackToDashboard}
             >
-              <FaArrowLeft className="mr-2" /> Go Back
+              <FaArrowLeft className="mr-2" size={16} /> Return to Dashboard
             </motion.button>
             <motion.button
-              className="bg-gradient-to-r from-green-400 to-blue-500 text-white py-3 px-8 rounded-full transition flex items-center"
               onClick={handleStart}
-              whileHover={{ scale: 1.05, boxShadow: '0px 0px 8px rgb(59, 130, 246)' }}
+              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-md hover:from-blue-600 hover:to-purple-600 transition-colors flex items-center"
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Start <FaPlay className="ml-2" />
+              Begin Assessment <FaPlay className="ml-2" size={16} />
             </motion.button>
           </div>
-
-          <motion.div
-            className="mt-8 flex justify-center space-x-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2 }}
-          >
-            <motion.div whileHover={{ scale: 1.1 }} className="text-center">
-              <FaVolumeUp size={24} className="text-blue-500 mx-auto" />
-              <p className="text-sm text-gray-600">Clear Audio</p>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.1 }} className="text-center">
-              <FaBookOpen size={24} className="text-green-500 mx-auto" />
-              <p className="text-sm text-gray-600">Fun Sentences</p>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.1 }} className="text-center">
-              <FaSmile size={24} className="text-yellow-500 mx-auto" />
-              <p className="text-sm text-gray-600">Enjoy Learning</p>
-            </motion.div>
-          </motion.div>
         </motion.div>
       </div>
-
-      <style jsx>{`
-        .bg-rainbow-gradient {
-          background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #8b00ff);
-        }
-      `}</style>
     </div>
   );
 };
 
 SpeakingFrontPage.hideNavbar = true;
-
 
 export default SpeakingFrontPage;
