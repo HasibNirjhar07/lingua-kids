@@ -90,11 +90,18 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { name: "Home", icon: FaHome, href: "/dashboard" },
-    { name: "Training", icon: FaBook },
-    { name: "Progress", icon: FaChartLine },
-    { name: "Settings", icon: FaCog },
+    { name: "Home", icon: FaHome, link: "/dashboard" },
+    { name: "Reading", icon: FaBook, link: "/reading" }, // Update with actual link
+    { name: "Progress", icon: FaChartLine, link: "/progress" }, // Update with actual link
+    { name: "Settings", icon: FaCog, link: "/settings" }, // Update with actual link
   ];
+
+  const handleMenuClick = (link) => {
+    router.push(link);
+    if (isMobileMenuOpen) {
+      toggleMobileMenu(); // Close mobile menu after navigation
+    }
+  };
 
   return (
     <div className="relative">
@@ -155,6 +162,7 @@ const Sidebar = () => {
               }`}
               whileHover={{ scale: 1.1, color: "#FFEB3B", backgroundColor: "#4c51bf", borderRadius: "12px" }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => handleMenuClick(item.link)} // Use the new handler
             >
               <motion.div
                 className="flex items-center"
