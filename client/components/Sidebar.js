@@ -1,9 +1,36 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
-import { FaHome, FaBook, FaChartLine, FaCog, FaBars, FaSignOutAlt } from "react-icons/fa"; // Import logout icon
+import {
+  FaHome,
+  FaBook,
+  FaChartLine,
+  FaCog,
+  FaBars,
+  FaSignOutAlt,
+  FaGamepad,
+  FaGift,
+  FaVolumeMute,
+  FaVolumeUp,
+} from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
+import Image from "next/image";
+
+const AnimalIcon = ({ animal }) => {
+  const animalEmojis = {
+    lion: "🦁",
+    elephant: "🐘",
+    giraffe: "🦒",
+    monkey: "🐵",
+    fox: "🦊",
+    penguin: "🐧",
+  };
+
+  return (
+    <span className="text-4xl" role="img" aria-label={animal}>
+      {animalEmojis[animal]}
+    </span>
+  );
+};
 
 const AnimatedProgressBar = ({ value, size = "large" }) => {
   const circumference = 2 * Math.PI * 45;
@@ -74,10 +101,10 @@ const AnimatedProgressBar = ({ value, size = "large" }) => {
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSoundOn, setIsSoundOn] = useState(true);
   const router = useRouter();
-  const { pathname } = router; // Get current route path
+  const { pathname } = router;
 
-  // Load the collapsed state from local storage
   useEffect(() => {
     const storedState = localStorage.getItem("sidebarCollapsed");
     if (storedState) {
@@ -88,7 +115,7 @@ const Sidebar = () => {
   const toggleSidebar = () => {
     setIsCollapsed((prevState) => {
       const newState = !prevState;
-      localStorage.setItem("sidebarCollapsed", JSON.stringify(newState)); // Save new state to local storage
+      localStorage.setItem("sidebarCollapsed", JSON.stringify(newState));
       return newState;
     });
   };
@@ -103,92 +130,88 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { name: "Home", icon: FaHome, link: "/dashboard" },
-    { name: "Reading", icon: FaBook, link: "/reading" },
-    { name: "Progress", icon: FaChartLine, link: "/progress" },
-    { name: "Settings", icon: FaCog, link: "/settings" },
+    { name: "Home", icon: "lion", link: "/dashboard" },
+    { name: "Reading", icon: "elephant", link: "/reading" },
+  
+    { name: "Progress", icon: "giraffe", link: "/progress" },
+    { name: "Rewards", icon: "fox", link: "/rewards" },
+
   ];
 
   const handleMenuClick = (link) => {
     router.push(link);
     if (isMobileMenuOpen) {
-      toggleMobileMenu(); // Close mobile menu after navigation
+      toggleMobileMenu();
     }
   };
 
   return (
     <div className="relative">
-      {/* Sidebar for Desktop */}
       <motion.div
-        className={`bg-gradient-to-b from-indigo-600 to-purple-700 h-screen flex flex-col items-center rounded-r-3xl shadow-lg fixed lg:relative z-10 transition-transform transform ${
+        className={`bg-gradient-to-r from-cyan-500 to-indigo-600 min-h-screen flex flex-col items-center rounded-r-3xl shadow-lg fixed lg:relative z-10 transition-transform transform ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
         animate={{ width: isCollapsed ? 80 : 288 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
-        <motion.button
-          className="absolute top-4 right-4 text-white z-10 lg:hidden"
-          onClick={toggleMobileMenu}
-          whileHover={{ scale: 1.2, rotate: 15 }}
-          whileTap={{ scale: 0.9, rotate: -15 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
-          <FaBars className="text-3xl" />
-        </motion.button>
-
-        <motion.button
-          className="absolute top-4 right-4 text-white z-10 hidden lg:block"
-          onClick={toggleSidebar}
-          whileHover={{ scale: 1.2, rotate: 15 }}
-          whileTap={{ scale: 0.9, rotate: -15 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
-          <FaBars className="text-3xl" />
-        </motion.button>
-
-        <AnimatePresence>
-          {!isCollapsed && (
-            <motion.div
-              className="mb-12 text-center w-full p-6"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2 }}
-            >
-              <h1 className="text-yellow-300 text-4xl font-bold tracking-wide font-comic">
-                LinguaKids
-              </h1>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="flex  justify-between items-center w-auto p-4">
+          <AnimatePresence>
+            {!isCollapsed && (
+              <motion.div
+                className="flex-grow"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Image src="/logo (2).png" alt="LinguaKids" width={250} height={100} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <motion.button
+            className="text-white z-10"
+            onClick={toggleSidebar}
+            whileHover={{ scale: 1.2, rotate: 15 }}
+            whileTap={{ scale: 0.9, rotate: -15 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            <FaBars className="text-3xl" />
+          </motion.button>
+        </div>
 
         <nav
           className={`flex flex-col ${
-            isCollapsed ? "h-full justify-center space-y-12" : "space-y-6 w-full px-6"
+            isCollapsed
+              ? "h-full justify-center space-y-12"
+              : "space-y-6 w-full px-6"
           }`}
         >
           {menuItems.map((item, index) => (
             <motion.a
               key={index}
-              className={`text-white flex items-center transition duration-200 text-xl cursor-pointer ${
+              className={`text-white flex flex-auto items-center transition duration-200 text-xl cursor-pointer ${
                 isCollapsed ? "justify-center" : ""
               } ${
-                pathname === item.link
-                  ? "bg-purple-600 rounded-lg p-2"
-                  : ""
-              }`} // Highlight the active item
-              whileHover={{ scale: 1.1, color: "#FFEB3B", backgroundColor: "#4c51bf", borderRadius: "12px" }}
+                pathname === item.link ? "bg-indigo-300 rounded-lg p-2" : ""
+              }`}
+              whileHover={{
+                scale: 1.1,
+                color: "#FFEB3B",
+                backgroundColor: "#4c51bf",
+                borderRadius: "12px",
+              }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => handleMenuClick(item.link)} // Use the new handler
+              onClick={() => handleMenuClick(item.link)}
             >
               <motion.div
                 className="flex items-center"
                 animate={{ width: isCollapsed ? "auto" : "100%" }}
               >
-                <item.icon className={`text-2xl ${isCollapsed ? "mx-auto" : "mr-3"}`} />
+                <AnimalIcon animal={item.icon} />
                 <AnimatePresence>
                   {!isCollapsed && (
                     <motion.span
+                      className="ml-3 font-bold"
                       initial={{ opacity: 0, width: 0 }}
                       animate={{ opacity: 1, width: "auto" }}
                       exit={{ opacity: 0, width: 0 }}
@@ -203,18 +226,18 @@ const Sidebar = () => {
           ))}
         </nav>
 
-        <div className={`mt-auto w-full ${isCollapsed ? "pb-6" : "px-6 pb-6"}`}>
+        <div className={`mt-5 w-full ${isCollapsed ? "pb-6" : "px-6 pb-6"}`}>
           <AnimatePresence>
             {!isCollapsed && (
               <motion.button
                 onClick={handleLogout}
-                className="mb-6 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold w-full transition-transform transform hover:scale-105 flex items-center justify-center"
+                className="mb-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold w-full transition-transform transform hover:scale-105 flex items-center justify-center"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ duration: 0.2 }}
               >
-                <FaSignOutAlt className="mr-2" /> Logout
+                <FaSignOutAlt className="mr-2" /> Bye-bye
               </motion.button>
             )}
           </AnimatePresence>
@@ -223,10 +246,13 @@ const Sidebar = () => {
             animate={{ scale: isCollapsed ? 0.6 : 1 }}
             transition={{ duration: 0.3 }}
           >
-            <AnimatedProgressBar value={70} size={isCollapsed ? "small" : "large"} />
+            <AnimatedProgressBar
+              value={70}
+              size={isCollapsed ? "small" : "large"}
+            />
             {!isCollapsed && (
               <motion.p
-                className="mt-4 text-xl text-white"
+                className="mt-4 text-xl text-white font-bold"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
@@ -238,10 +264,10 @@ const Sidebar = () => {
         </div>
       </motion.div>
 
-      {/* Mobile Sidebar Toggle Button */}
       <button
         className="lg:hidden fixed top-4 left-4 text-indigo z-20"
         onClick={toggleMobileMenu}
+        aria-label="Toggle mobile menu"
       >
         <FaBars className="text-3xl text-indigo-700" />
       </button>
