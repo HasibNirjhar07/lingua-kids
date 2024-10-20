@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FaHome, FaBook, FaChartLine, FaCog, FaBars } from "react-icons/fa";
+import { FaHome, FaBook, FaChartLine, FaCog, FaBars, FaSignOutAlt } from "react-icons/fa"; // Import logout icon
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
 
@@ -75,6 +75,7 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
+  const { pathname } = router; // Get current route path
 
   // Load the collapsed state from local storage
   useEffect(() => {
@@ -103,9 +104,9 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "Home", icon: FaHome, link: "/dashboard" },
-    { name: "Reading", icon: FaBook, link: "/reading" }, // Update with actual link
-    { name: "Progress", icon: FaChartLine, link: "/progress" }, // Update with actual link
-    { name: "Settings", icon: FaCog, link: "/settings" }, // Update with actual link
+    { name: "Reading", icon: FaBook, link: "/reading" },
+    { name: "Progress", icon: FaChartLine, link: "/progress" },
+    { name: "Settings", icon: FaCog, link: "/settings" },
   ];
 
   const handleMenuClick = (link) => {
@@ -171,7 +172,11 @@ const Sidebar = () => {
               key={index}
               className={`text-white flex items-center transition duration-200 text-xl cursor-pointer ${
                 isCollapsed ? "justify-center" : ""
-              }`}
+              } ${
+                pathname === item.link
+                  ? "bg-purple-600 rounded-lg p-2"
+                  : ""
+              }`} // Highlight the active item
               whileHover={{ scale: 1.1, color: "#FFEB3B", backgroundColor: "#4c51bf", borderRadius: "12px" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleMenuClick(item.link)} // Use the new handler
@@ -203,13 +208,13 @@ const Sidebar = () => {
             {!isCollapsed && (
               <motion.button
                 onClick={handleLogout}
-                className="mb-6 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold w-full transition-transform transform hover:scale-105"
+                className="mb-6 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold w-full transition-transform transform hover:scale-105 flex items-center justify-center"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ duration: 0.2 }}
               >
-                Logout
+                <FaSignOutAlt className="mr-2" /> Logout
               </motion.button>
             )}
           </AnimatePresence>
