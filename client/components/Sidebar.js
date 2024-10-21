@@ -14,6 +14,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import useSound from "use-sound";
 
 const AnimalIcon = ({ animal }) => {
   const animalEmojis = {
@@ -105,12 +106,23 @@ const Sidebar = () => {
   const router = useRouter();
   const { pathname } = router;
 
+  const [play, { stop }] = useSound('/sounds/click.mp3', {
+    loop: true,
+    volume: 0.5,
+  });
+
   useEffect(() => {
     const storedState = localStorage.getItem("sidebarCollapsed");
     if (storedState) {
       setIsCollapsed(JSON.parse(storedState));
     }
-  }, []);
+
+    if (isSoundOn) {
+      play();
+    }
+
+    return () => stop();
+  }, [play, stop, isSoundOn]);
 
   const toggleSidebar = () => {
     setIsCollapsed((prevState) => {
@@ -129,13 +141,23 @@ const Sidebar = () => {
     router.push("/login");
   };
 
+  const toggleSound = () => {
+    setIsSoundOn((prevState) => {
+      const newState = !prevState;
+      if (newState) {
+        play();
+      } else {
+        stop();
+      }
+      return newState;
+    });
+  };
+
   const menuItems = [
     { name: "Home", icon: "lion", link: "/dashboard" },
     { name: "Reading", icon: "elephant", link: "/reading" },
-  
     { name: "Progress", icon: "giraffe", link: "/progress" },
     { name: "Rewards", icon: "fox", link: "/rewards" },
-
   ];
 
   const handleMenuClick = (link) => {
@@ -154,7 +176,7 @@ const Sidebar = () => {
         animate={{ width: isCollapsed ? 80 : 288 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
-        <div className="flex  justify-between items-center w-auto p-4">
+        <div className="flex justify-between items-center w-auto p-4">
           <AnimatePresence>
             {!isCollapsed && (
               <motion.div
@@ -262,6 +284,15 @@ const Sidebar = () => {
             )}
           </motion.div>
         </div>
+
+        <motion.button
+          onClick={toggleSound}
+          className={`text-white ${isCollapsed ? 'mt-4' : 'mt-2'} transition-transform transform hover:scale-110`}
+          whileHover={{ scale: 1.2 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          {isSoundOn ? <FaVolumeUp size={24} /> : <FaVolumeMute size={24} />}
+        </motion.button>
       </motion.div>
 
       <button
