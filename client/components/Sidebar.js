@@ -141,18 +141,32 @@ const Sidebar = () => {
     router.push("/login");
   };
 
+  useEffect(() => {
+    const storedSoundState = localStorage.getItem("soundState");
+    if (storedSoundState) {
+      setIsSoundOn(JSON.parse(storedSoundState)); // Retrieve saved sound state
+    }
+  
+    if (isSoundOn) {
+      play(); // Play sound if the state is "on"
+    }
+  
+    return () => stop(); // Stop sound on cleanup
+  }, [play, stop, isSoundOn]);
+  
   const toggleSound = () => {
     setIsSoundOn((prevState) => {
       const newState = !prevState;
+      localStorage.setItem("soundState", JSON.stringify(newState)); // Save sound state
       if (newState) {
-        play();
+        play(); // Play sound if turned on
       } else {
-        stop();
+        stop(); // Stop sound if turned off
       }
       return newState;
     });
   };
-
+  
   const menuItems = [
     { name: "Home", icon: "lion", link: "/dashboard" },
     { name: "Reading", icon: "elephant", link: "/reading" },
