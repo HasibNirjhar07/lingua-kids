@@ -169,7 +169,7 @@ const Sidebar = () => {
   
   const menuItems = [
     { name: "Home", icon: "lion", link: "/dashboard" },
-    { name: "Reading", icon: "elephant", link: "/reading" },
+    { name: "Resources", icon: "elephant", link: "/resources" },
     { name: "Progress", icon: "giraffe", link: "/progress" },
     { name: "Rewards", icon: "fox", link: "/rewards" },
   ];
