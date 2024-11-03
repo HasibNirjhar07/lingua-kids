@@ -114,15 +114,15 @@ const submitUserAnswers = async (req, res) => {
 
 // Fetch random passage for user
 const getRandomPassage = async (req, res) => {
-    const userId = req.user.id;
+    const username = req.username;
 
     try {
         // Fetch a random passage that the user hasn't read
         const result = await pool.query(
-            `SELECT * FROM passages 
-             WHERE id NOT IN (SELECT passage_id FROM passage_read WHERE user_id = $1)
+            `SELECT * FROM passages
+             WHERE difficulty = (SELECT difficulty FROM users WHERE username = $1)
              ORDER BY RANDOM() LIMIT 1`,
-            [userId]
+            [username]
         );
 
         const passage = result.rows[0];

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { FaSun, FaCloud, FaStar, FaEnvelope, FaLock, FaRocket } from 'react-icons/fa';
 
 const Login = () => {
-    const [email, setEmail] = useState('');
+    const [username, setusername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
@@ -14,7 +14,7 @@ const Login = () => {
         const response = await fetch('http://localhost:3000/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ username, password }),
         });
 
         const data = await response.json();
@@ -62,13 +62,13 @@ const Login = () => {
                     <div className="mb-4 relative">
                         <FaEnvelope className="absolute top-3 left-3 text-indigo-400" size={20} />
                         <input
-                            type="email"
-                            placeholder="Your Magic Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            type="username"
+                            placeholder="Your Magic username"
+                            value={username}
+                            onChange={(e) => setusername(e.target.value)}
                             required
                             className="w-full p-3 pl-10 border-2 border-indigo-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-400 transition duration-200 placeholder-indigo-400 font-comic text-indigo-700"
-                            aria-label="Email"
+                            aria-label="username"
                         />
                     </div>
                     <div className="mb-4 relative">

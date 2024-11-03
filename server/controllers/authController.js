@@ -4,24 +4,24 @@ const jwt = require('jsonwebtoken');
 
 // Handle signup form submission
 const signupUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     // Simple validation
-    if (!email || !password) {
+    if (!username || !password) {
         return res.status(400).json({ error: 'Please provide all fields' });
     }
 
     try {
         // Check if the user already exists
-        const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        const existingUser = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
         if (existingUser.rows.length > 0) {
             return res.status(400).json({ error: 'User already exists' });
         }
 
         // Insert the user into the database with plain-text password
         const newUser = await pool.query(
-            'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email',
-            [email, password]
+            'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING username',
+            [username, password]
         );
 
         res.status(201).json({ message: 'User created successfully', user: newUser.rows[0] });
@@ -36,16 +36,16 @@ const signupUser = async (req, res) => {
 // controllers/authController.js
 
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     // Validate user input
-    if (!email || !password) {
+    if (!username || !password) {
         return res.status(400).json({ error: 'Please provide all fields' });
     }
 
     try {
         // Find user in the database
-        const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        const userResult = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
         const user = userResult.rows[0];
 
         if (!user) {
@@ -59,7 +59,7 @@ const loginUser = async (req, res) => {
 
         // Generate JWT Token
         const token = jwt.sign(
-            { id: user.id, email: user.email },
+            {username: user.username},
             'randomsecret', // Secret should be stored securely
             { expiresIn: '2d' }
         );
@@ -77,8 +77,8 @@ const loginUser = async (req, res) => {
 
 const getUserInfo = async (req, res) => {
     try {
-        const userId = req.user.id; // From decoded token
-        const userResult = await pool.query('SELECT id, email FROM users WHERE id = $1', [userId]);
+        const username = req.user.username; // From decoded token
+        const userResult = await pool.query('SELECT username FROM users WHERE username = $1', [username]);
         const user = userResult.rows[0];
 
         if (!user) {
@@ -94,7 +94,7 @@ const getUserInfo = async (req, res) => {
 
 const addFavoriteGame = async (req, res) => {
     const { name } = req.body; // Get game name from request body
-    const userId = req.user.id; // Assuming userInfo is set in authMiddleware
+    const username = req.username; // Assuming userInfo is set in authMiddleware
 
     if (!name) {
         return res.status(400).json({ error: 'Game name is required' });
@@ -103,8 +103,8 @@ const addFavoriteGame = async (req, res) => {
     try {
         // Insert the game into the database
         const newGame = await pool.query(
-            'INSERT INTO games (user_id, name) VALUES ($1, $2) RETURNING *',
-            [userId, name]
+            'INSERT INTO games (username, name) VALUES ($1, $2) RETURNING *',
+            [username, name]
         );
 
         return res.status(201).json({ game: newGame.rows[0] }); // Respond with the new game
@@ -116,11 +116,11 @@ const addFavoriteGame = async (req, res) => {
 
 // Get user's favorite games
 const getFavoriteGames = async (req, res) => {
-    const userId = req.user.id; // Get user ID from decoded token
+    const username = req.username; // Get user ID from decoded token
 
     try {
         // Query the database for the user's favorite games
-        const gamesResult = await pool.query('SELECT * FROM games WHERE user_id = $1', [userId]);
+        const gamesResult = await pool.query('SELECT * FROM games WHERE username = $1', [username]);
         const games = gamesResult.rows;
 
         return res.status(200).json({ games }); // Send games back to frontend
