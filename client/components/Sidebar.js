@@ -273,7 +273,7 @@ const Sidebar = () => {
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ duration: 0.2 }}
               >
-                <FaSignOutAlt className="mr-2" /> Bye-bye
+                <FaSignOutAlt className="mr-2" /> Log-Out
               </motion.button>
             )}
           </AnimatePresence>

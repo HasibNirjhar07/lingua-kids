@@ -67,12 +67,41 @@ const Signup = () => {
             />
           </div>
           <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white p-3 rounded-full shadow-md hover:from-yellow-500 hover:to-orange-600 transition duration-200 font-comic text-lg font-bold flex items-center justify-center"
-          >
-            <FaRocket className="mr-2" />
-            Start Your Adventure!
-          </button>
+  type="submit"
+  className="group w-full text-white p-3 rounded-full shadow-md font-comic text-lg font-bold flex items-center justify-center overflow-hidden relative hover:shadow-lg transition-shadow duration-200 transform hover:scale-[1.02] hover:brightness-[1.1]"
+  style={{
+    background: `linear-gradient(
+      90deg,
+      #f6b73c 0%,
+      #f18271 20%,
+      #f97316 40%,
+      #f6b73c 60%,
+      #f18271 80%,
+      #f97316 100%
+    )`,
+    backgroundSize: '200% 100%',
+    animation: 'gradientMove 3s linear infinite'
+  }}
+>
+  <FaRocket className="mr-2 group-hover:-translate-y-0.5 transition-transform" />
+  Start Your Adventure!
+  <style>
+    {`
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        100% {
+          background-position: 200% 50%;
+        }
+      }
+      .hover\\:brightness-\\[1\\.1\\]:hover {
+        filter: brightness(1.1);
+      }
+    `}
+  </style>
+</button>
+
           <p className="text-center text-indigo-600 mt-4 font-comic">
             Already on the journey?{' '}
             <a href="/login" className="text-yellow-600 hover:underline font-bold">
