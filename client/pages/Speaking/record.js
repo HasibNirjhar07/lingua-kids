@@ -12,6 +12,11 @@ import { GiSparkles, GiPartyPopper } from "react-icons/gi";
 import Modal from "../../components/Modal";
 import confetti from "canvas-confetti";
 import { motion, AnimatePresence } from "framer-motion";
+import pronouncing from "cmu-pronouncing-dictionary"; // Import the CMU Pronouncing Dictionary
+import levenshtein from "fast-levenshtein"; // Import Levenshtein distance
+
+console.log(pronouncing); // Should not be undefined
+
 
 const RecordPage = () => {
   const router = useRouter();
@@ -22,6 +27,9 @@ const RecordPage = () => {
   const [text, setText] = useState("");
   const recognitionRef = useRef(null);
   const mediaRecorderRef = useRef(null);
+  const [transcribedText, setTranscribedText] = useState("");
+  const [phoneticText, setPhoneticText] = useState("");
+  const [accuracy, setAccuracy] = useState(null);
 
   useEffect(() => {
     setIsRecording(false);
@@ -32,13 +40,35 @@ const RecordPage = () => {
     setIsRecording(true);
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setText(transcript);
-      console.log(transcript);
-      console.log("event", event);
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript.toLowerCase();
+      setTranscribedText(transcript);
+
+      // Fetch phonetic transcription using CMU Pronouncing Dictionary
+      const words = transcript.split(" ");
+      const phoneticResults = words
+      .map((word) => pronouncing.lookup(word) || []) // Change `get` to `lookup` or any correct function
+      .filter((result) => result.length > 0)
+      .map((result) => result[0])
+      .join(" ");
+
+      console.log(phoneticResults); // Check the output      
+      setPhoneticText(phoneticResults);
+
+      // Calculate pronunciation accuracy by comparing the transcribed and dictionary phonetics
+      const correctPhonetic = words
+        .map((word) => pronouncing.get(word))
+        .filter((result) => result.length > 0)
+        .map((result) => result[0])
+        .join(" ");
+
+      const userPhonetic = phoneticResults;
+      const distance = levenshtein.get(userPhonetic, correctPhonetic);
+      const maxLen = Math.max(userPhonetic.length, correctPhonetic.length);
+      const similarity = (1 - distance / maxLen) * 100;
+      setAccuracy(similarity.toFixed(2));
     };
 
     recognition.onerror = (event) => {
@@ -105,6 +135,7 @@ const RecordPage = () => {
 
   const handleSubmit = () => {
     setShowModal(true);
+    
     confetti({
       particleCount: 100,
       spread: 70,
