@@ -2,51 +2,46 @@ const pool = require('../db');
 const jwt = require('jsonwebtoken');
 const { use } = require('../routes/auth');
 
-// Fetch a passage with related questions and options
+// Fetch a passage with related MCQ questions and options
 const getPassageWithQuestions = async (req, res) => {
-    const { passageId } = req.params;
-    const userId = req.user.id;
+    const { passage_id } = req.params;
+    const username = req.user.username;
 
     try {
         // Check if user has already completed the passage
         const passageReadResult = await pool.query(
-            'SELECT * FROM passage_read WHERE passage_id = $1 AND user_id = $2',
-            [passageId, userId]
+            'SELECT * FROM passages WHERE passage_id = $1',
+            [passage_id]
         );
         if (passageReadResult.rows.length > 0) {
             return res.status(400).json({ error: 'Passage already completed' });
         }
 
         // Fetch the passage from the database
-        const passageResult = await pool.query('SELECT * FROM passages WHERE id = $1', [passageId]);
+        const passageResult = await pool.query('SELECT * FROM passages WHERE passage_id = $1', [passage_id]);
         const passage = passageResult.rows[0];
         if (!passage) {
             return res.status(404).json({ error: 'Passage not found' });
         }
 
-        // Fetch related questions and options
-        const questionsResult = await pool.query(
-            `SELECT q.id AS question_id, q.question_text, o.id AS option_id, o.option_text
-             FROM questions q
-             JOIN options o ON o.question_id = q.id
-             WHERE q.passage_id = $1`,
-            [passageId]
+        // Fetch only MCQ questions related to the passage
+        const mcqResult = await pool.query(
+            `SELECT question_id, question_text, opt1, opt2, opt3, opt4, correct_answer
+             FROM mcqquestions WHERE passage_id = $1`,
+            [passage_id]
         );
 
-        // Organize questions and options
-        const questions = questionsResult.rows.reduce((acc, row) => {
-            const question = acc.find(q => q.id === row.question_id);
-            if (question) {
-                question.options.push({ id: row.option_id, text: row.option_text });
-            } else {
-                acc.push({
-                    id: row.question_id,
-                    text: row.question_text,
-                    options: [{ id: row.option_id, text: row.option_text }]
-                });
-            }
-            return acc;
-        }, []);
+        const questions = mcqResult.rows.map(row => ({
+            id: row.question_id,
+            text: row.question_text,
+            type: 'MCQ',
+            options: [
+                { id: 'opt1', text: row.opt1 },
+                { id: 'opt2', text: row.opt2 },
+                { id: 'opt3', text: row.opt3 },
+                { id: 'opt4', text: row.opt4 }
+            ]
+        }));
 
         res.status(200).json({ passage, questions });
     } catch (error) {
@@ -54,7 +49,6 @@ const getPassageWithQuestions = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-
 
 // Submit user's answers and calculate score
 const submitUserAnswers = async (req, res) => {
@@ -114,10 +108,11 @@ const submitUserAnswers = async (req, res) => {
 
 // Fetch random passage for user
 const getRandomPassage = async (req, res) => {
-    const username = req.username;
+    const username = req.user.username;
+    console.log(username);
 
     try {
-        // Fetch a random passage that the user hasn't read
+        // Fetch a random passage with the user's difficulty level that the user hasn't read yet
         const result = await pool.query(
             `SELECT * FROM passages
              WHERE difficulty = (SELECT difficulty FROM users WHERE username = $1)
@@ -126,8 +121,9 @@ const getRandomPassage = async (req, res) => {
         );
 
         const passage = result.rows[0];
+
         if (!passage) {
-            return res.status(404).json({ error: 'No unread passages available' });
+            return res.status(404).json({ error: 'No unread passages available for your difficulty level' });
         }
 
         res.status(200).json(passage);
@@ -136,6 +132,7 @@ const getRandomPassage = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 
 module.exports = {

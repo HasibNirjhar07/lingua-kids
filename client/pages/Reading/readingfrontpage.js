@@ -34,7 +34,8 @@ const ReadingFrontPage = () => {
 
       if (response.ok) {
         const passage = await response.json();
-        router.push(`/Reading/${passage.id}`);
+        console.log('Fetched random passage:', passage);
+        router.push(`/Reading/${passage.passage_id}`);
       } else {
         console.error('Failed to fetch a random passage', response.status, response.statusText);
       }
