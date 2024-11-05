@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 const { use } = require('../routes/auth');
 
 const getPassageWithQuestions = async (req, res) => {
-    const { passageId } = req.params;
-    const userId = req.user.id;
+    const { passage_id } = req.params;
+    const username = req.user.username;
 
     try {
         // Fetch the passage from the database
@@ -103,9 +103,11 @@ const submitUserAnswers = async (req, res) => {
 const getRandomPassage = async (req, res) => {
     const username = req.user.username;
     console.log(username);
+    const username = req.user.username;
+    console.log(username);
 
     try {
-        // Fetch a random passage that the user hasn't read
+        // Fetch a random passage with the user's difficulty level that the user hasn't read yet
         const result = await pool.query(
             `SELECT * FROM passages
              WHERE difficulty = (SELECT difficulty FROM users WHERE username = $1)
@@ -114,8 +116,9 @@ const getRandomPassage = async (req, res) => {
         );
 
         const passage = result.rows[0];
+
         if (!passage) {
-            return res.status(404).json({ error: 'No unread passages available' });
+            return res.status(404).json({ error: 'No unread passages available for your difficulty level' });
         }
 
         res.status(200).json(passage);
@@ -124,6 +127,7 @@ const getRandomPassage = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 
 module.exports = {
