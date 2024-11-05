@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
 import { Clock, Medal, Trophy, Star } from 'lucide-react';
@@ -57,9 +57,8 @@ const PerformanceGauge = () => {
   };
 
   return (
-    
     <motion.div
-      className="w-full  bg-white rounded-2xl p-6 shadow-md"
+      className="w-full bg-white rounded-2xl p-6 shadow-md"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6 }}
@@ -94,7 +93,6 @@ const PerformanceGauge = () => {
         </motion.div>
       </div>
     </motion.div>
-   
   );
 };
 
@@ -133,7 +131,8 @@ const Badge = ({ icon: Icon, title, description, color }) => (
 
 const LanguageProgress = () => {
   const [selectedSkill, setSelectedSkill] = useState('all');
-  
+  const [readingProgress, setReadingProgress] = useState(0); // State for reading progress
+
   const activeTimeData = [
     { day: 'Mon', minutes: 45 },
     { day: 'Tue', minutes: 60 },
@@ -164,10 +163,35 @@ const LanguageProgress = () => {
     ],
   };
 
+  // Fetch reading progress from the backend
+  useEffect(() => {
+    const fetchReadingProgress = async () => {
+      const token = localStorage.getItem('token'); // Assuming you're using tokens for authentication
+      try {
+        const response = await fetch('http://localhost:3000/reading/progress', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setReadingProgress(data.readingProgress); // Set the fetched reading progress
+        } else {
+          console.error('Failed to fetch reading progress:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching reading progress:', error);
+      }
+    };
+
+    fetchReadingProgress();
+  }, []);
+
   return (
-    
-      
-    <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-100 ">
+    <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-100">
       <Sidebar />
       <div className="w-full mx-auto ml-6 mr-6 my-6 space-y-6">
         <h1 className="text-3xl font-bold text-gray-800 text-center mb-8">Language Learning Progress</h1>
@@ -180,7 +204,7 @@ const LanguageProgress = () => {
             className="bg-white rounded-2xl p-6 shadow-md"
           >
             <h3 className="text-gray-600 font-medium mb-4 text-lg">Skill Progress</h3>
-            <SkillProgress skill="Reading" progress={75} color="bg-blue-500" />
+            <SkillProgress skill="Reading" progress={readingProgress} color="bg-blue-500" /> {/* Use dynamic reading progress */}
             <SkillProgress skill="Writing" progress={85} color="bg-green-500" />
             <SkillProgress skill="Speaking" progress={65} color="bg-yellow-500" />
             <SkillProgress skill="Listening" progress={80} color="bg-purple-500" />
@@ -287,7 +311,6 @@ const LanguageProgress = () => {
         </div>
       </div>
     </div>
-   
   );
 };
 
