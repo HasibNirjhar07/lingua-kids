@@ -88,8 +88,8 @@ const submitUserAnswers = async (req, res) => {
             [userId, passageId, Math.round(scorePercentage)]
         );
 
-        // Return the score percentage to the user
-        res.status(200).json({ scorePercentage, totalQuestions });
+        // Return the score percentage and number of correct answers to the user
+        res.status(200).json({ scorePercentage, correctAnswers: correctAnswersCount, totalQuestions });
     } catch (error) {
         console.error('Error submitting answers:', error);
         res.status(500).json({ error: 'Internal server error' });

@@ -18,6 +18,7 @@ const PassagePage = () => {
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [timeTaken, setTimeTaken] = useState(0);
     const [startTime, setStartTime] = useState(null);
+    
 
     useEffect(() => {
         if (passageId) {

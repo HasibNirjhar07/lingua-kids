@@ -82,9 +82,9 @@ const ReadingFrontPage = () => {
           {/* Info Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {[
-              { icon: FaClock, title: "Time Limit", value: "15 mins", color: "text-green-500" },
-              { icon: FaQuestionCircle, title: "Questions", value: "15 total", color: "text-blue-500" },
-              { icon: FaGlasses, title: "Difficulty", value: "Adjustable", color: "text-pink-500" }
+              { icon: FaClock, title: "Time Limit", value: "10 mins", color: "text-green-500" },
+              { icon: FaQuestionCircle, title: "Questions", value: "5 total", color: "text-blue-500" },
+              { icon: FaGlasses, title: "Difficulty", value: "Beginner", color: "text-pink-500" }
             ].map((item, index) => (
               <motion.div 
                 key={index} 

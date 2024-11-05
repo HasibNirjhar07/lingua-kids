@@ -102,7 +102,7 @@ const AnimatedProgressBar = ({ value, size = "large" }) => {
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSoundOn, setIsSoundOn] = useState(true);
+  const [isSoundOn, setIsSoundOn] = useState(false);
   const router = useRouter();
   const { pathname } = router;
 
