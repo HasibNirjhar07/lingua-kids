@@ -414,157 +414,160 @@ const Dashboard = () => {
 
         {/* Progress Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {/* Listening */}
-          <motion.div
-            className="bg-gradient-to-br from-yellow-400 to-yellow-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300"
-            whileHover={{ scale: 1.05, rotate: -3 }}
-          >
-            <FaHeadphones className="text-white text-6xl mb-4 animate-bounce" />
-            <h2 className="text-3xl font-bold text-white mb-2">Listening</h2>
-            <p className="text-white text-xl mb-4">785 Words</p>
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              custom={0}
-              variants={progressVariants}
-              className="w-24 h-24 mx-auto mb-6"
-            >
-              <CircularProgressbar
-                value={progressData.listening}
-                text={`${progressData.listening}%`}
-                styles={buildStyles({
-                  pathTransitionDuration: 2,
-                  pathColor: "#fbbf24",
-                  textColor: "#fff",
-                  trailColor: "#fff5cc",
-                })}
-              />
-            </motion.div>
-            <motion.button
-              className="mt-6 bg-white text-yellow-500 px-6 py-3 rounded-full text-xl font-bold hover:bg-yellow-500 hover:text-white transition duration-300"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              Start
-            </motion.button>
-          </motion.div>
+  {/* Listening */}
+  <motion.div
+    className="bg-gradient-to-br from-yellow-400 to-yellow-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 relative"
+    whileHover={{ scale: 1.05, rotate: -3 }}
+  >
+    <div className="absolute top-4 right-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Beginner</div>
+    <FaHeadphones className="text-white text-6xl mb-4 animate-bounce" />
+    <h2 className="text-3xl font-bold text-white mb-2">Listening</h2>
+    <p className="text-white text-xl mb-4">785 Words</p>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      custom={0}
+      variants={progressVariants}
+      className="w-24 h-24 mx-auto mb-6"
+    >
+      <CircularProgressbar
+        value={progressData.listening}
+        text={`${progressData.listening}%`}
+        styles={buildStyles({
+          pathTransitionDuration: 2,
+          pathColor: "#fbbf24",
+          textColor: "#fff",
+          trailColor: "#fff5cc",
+        })}
+      />
+    </motion.div>
+    <motion.button
+      className="mt-6 bg-white text-yellow-500 px-6 py-3 rounded-full text-xl font-bold hover:bg-yellow-500 hover:text-white transition duration-300"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+    >
+      Start
+    </motion.button>
+  </motion.div>
 
-          {/* Reading */}
-          <motion.div
-            className="bg-gradient-to-br from-pink-400 to-pink-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300"
-            whileHover={{ scale: 1.05, rotate: 3 }}
-          >
-            <FaBookOpen className="text-white text-6xl mb-4 animate-pulse" />
-            <h2 className="text-3xl font-bold text-white mb-2">Reading</h2>
-            <p className="text-white text-xl mb-4">1290 Characters</p>
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              custom={1}
-              variants={progressVariants}
-              className="w-24 h-24 mx-auto mb-6"
-            >
-              <CircularProgressbar
-                value={progressData.reading}
-                text={`${progressData.reading}%`}
-                styles={buildStyles({
-                  pathTransitionDuration: 2,
-                  pathColor: "#ec4899",
-                  textColor: "#fff",
-                  trailColor: "#ffebef",
-                })}
-              />
-            </motion.div>
-            <motion.button
-              onClick={() => router.push("/Reading/readingfrontpage")}
-              className="mt-6 bg-white text-pink-500 px-6 py-3 rounded-full text-xl font-bold hover:bg-pink-500 hover:text-white transition duration-300"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              Start
-            </motion.button>
-          </motion.div>
+  {/* Reading */}
+  <motion.div
+    className="bg-gradient-to-br from-pink-400 to-pink-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 relative"
+    whileHover={{ scale: 1.05, rotate: 3 }}
+  >
+    <div className="absolute top-4 right-4 bg-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Intermediate</div>
+    <FaBookOpen className="text-white text-6xl mb-4 animate-pulse" />
+    <h2 className="text-3xl font-bold text-white mb-2">Reading</h2>
+    <p className="text-white text-xl mb-4">10 Passages</p>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      custom={1}
+      variants={progressVariants}
+      className="w-24 h-24 mx-auto mb-6"
+    >
+      <CircularProgressbar
+        value={progressData.reading}
+        text={`${progressData.reading}%`}
+        styles={buildStyles({
+          pathTransitionDuration: 2,
+          pathColor: "#ec4899",
+          textColor: "#fff",
+          trailColor: "#ffebef",
+        })}
+      />
+    </motion.div>
+    <motion.button
+      onClick={() => router.push("/Reading/readingfrontpage")}
+      className="mt-6 bg-white text-pink-500 px-6 py-3 rounded-full text-xl font-bold hover:bg-pink-500 hover:text-white transition duration-300"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+    >
+      Start
+    </motion.button>
+  </motion.div>
 
-          {/* Learn Words */}
-          <motion.div
-            className="bg-gradient-to-br from-blue-400 to-blue-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300"
-            whileHover={{ scale: 1.05, rotate: -3 }}
-          >
-            <FaPlay className="text-white text-6xl mb-4 animate-spin" />
-            <h2 className="text-3xl font-bold text-white mb-2">Learn Words</h2>
-            <p className="text-white text-xl mb-4">17 Words</p>
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              custom={2}
-              variants={progressVariants}
-              className="w-24 h-24 mx-auto mb-6"
-            >
-              <CircularProgressbar
-                value={progressData.learnWords}
-                text={`${progressData.learnWords}%`}
-                styles={buildStyles({
-                  pathTransitionDuration: 2,
-                  pathColor: "#3b82f6",
-                  textColor: "#fff",
-                  trailColor: "#e0f2fe",
-                })}
-              />
-            </motion.div>
-            <motion.button
-              className="mt-6 bg-white text-blue-500 px-6 py-3 rounded-full text-xl font-bold hover:bg-blue-500 hover:text-white transition duration-300"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              Start
-            </motion.button>
-          </motion.div>
+  {/* Learn Words */}
+  <motion.div
+    className="bg-gradient-to-br from-blue-400 to-blue-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 relative"
+    whileHover={{ scale: 1.05, rotate: -3 }}
+  >
+    <div className="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Intermediate</div>
+    <FaPlay className="text-white text-6xl mb-4 animate-spin" />
+    <h2 className="text-3xl font-bold text-white mb-2">Writing</h2>
+    <p className="text-white text-xl mb-4">17 Words</p>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      custom={2}
+      variants={progressVariants}
+      className="w-24 h-24 mx-auto mb-6"
+    >
+      <CircularProgressbar
+        value={progressData.learnWords}
+        text={`${progressData.learnWords}%`}
+        styles={buildStyles({
+          pathTransitionDuration: 2,
+          pathColor: "#3b82f6",
+          textColor: "#fff",
+          trailColor: "#e0f2fe",
+        })}
+      />
+    </motion.div>
+    <motion.button
+      className="mt-6 bg-white text-blue-500 px-6 py-3 rounded-full text-xl font-bold hover:bg-blue-500 hover:text-white transition duration-300"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+    >
+      Start
+    </motion.button>
+  </motion.div>
 
-          {/* Speaking */}
-          <motion.div
-            className="bg-gradient-to-br from-green-500 to-green-300 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300"
-            whileHover={{ scale: 1.05, rotate: -3 }}
-          >
-            <FaMicrophone
-              className="text-white text-6xl mb-4"
-              style={{
-                filter: "drop-shadow(0px 0px 10px yellow)",
-                animation: "glow 1.5s infinite alternate",
-              }}
-            />
-            <h2 className="text-3xl font-bold text-white mb-2">
-              Practice Speaking
-            </h2>
-            <p className="text-white text-xl mb-4">10 Phrases</p>
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              custom={3}
-              variants={progressVariants}
-              className="w-24 h-24 mx-auto mb-6"
-            >
-              <CircularProgressbar
-                value={progressData.speaking}
-                text={`${progressData.speaking}%`}
-                styles={buildStyles({
-                  pathTransitionDuration: 2,
-                  pathColor: "#10b981",
-                  textColor: "#fff",
-                  trailColor: "#d1fae5",
-                })}
-              />
-            </motion.div>
-            <motion.button
-              onClick={() => router.push("/Speaking/speakingfrontpage")}
-              className="mt-6 bg-white text-green-600 px-6 py-3 rounded-full text-xl font-bold hover:bg-green-500 hover:text-white transition duration-300"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              Start Speaking
-            </motion.button>
-          </motion.div>
-        </div>
-
+  {/* Speaking */}
+  <motion.div
+    className="bg-gradient-to-br from-green-500 to-green-300 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 relative"
+    whileHover={{ scale: 1.05, rotate: -3 }}
+  >
+    <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Advanced</div>
+    <FaMicrophone
+      className="text-white text-6xl mb-4"
+      style={{
+        filter: "drop-shadow(0px 0px 10px yellow)",
+        animation: "glow 1.5s infinite alternate",
+      }}
+    />
+    <h2 className="text-3xl font-bold text-white mb-2">
+      Practice Speaking
+    </h2>
+    <p className="text-white text-xl mb-4">10 Sentences</p>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      custom={3}
+      variants={progressVariants}
+      className="w-24 h-24 mx-auto mb-6"
+    >
+      <CircularProgressbar
+        value={progressData.speaking}
+        text={`${progressData.speaking}%`}
+        styles={buildStyles({
+          pathTransitionDuration: 2,
+          pathColor: "#10b981",
+          textColor: "#fff",
+          trailColor: "#d1fae5",
+        })}
+      />
+    </motion.div>
+    <motion.button
+      onClick={() => router.push("/Speaking/speakingfrontpage")}
+      className="mt-6 bg-white text-green-600 px-6 py-3 rounded-full text-xl font-bold hover:bg-green-500 hover:text-white transition duration-300"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+    >
+      Start Speaking
+    </motion.button>
+  </motion.div>
+</div>
         {/* Achievements and Daily Streak */}
         <div className="space-y-8">
           {/* Achievements and Daily Streak */}
