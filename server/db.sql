@@ -150,7 +150,6 @@ CREATE TABLE Speaking_Progress (
 CREATE TABLE Writing_Progress (
     progress_id SERIAL PRIMARY KEY,
     username VARCHAR(255) REFERENCES Users(username),
-    content_id VARCHAR(10) REFERENCES Speaking_Content(content_id),
     score INT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -165,3 +164,22 @@ CREATE TABLE Progress(
     Total_Progress INT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE Streak(
+    streak_id SERIAL PRIMARY KEY,
+    username VARCHAR(255) REFERENCES Users(username),
+    streak INT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+CREATE TABLE Achievements(
+    achievement_id SERIAL PRIMARY KEY,
+    achievement VARCHAR(255) NOT NULL,
+)
+
+CREATE TABLE User_Achievements(
+    user_achievement_id SERIAL PRIMARY KEY,
+    username VARCHAR(255) REFERENCES Users(username),
+    achievement_id INT REFERENCES Achievements(achievement_id),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
