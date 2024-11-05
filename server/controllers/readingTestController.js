@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 const { use } = require('../routes/auth');
 
 const getPassageWithQuestions = async (req, res) => {
-    const { passage_id } = req.params;
-    const username = req.user.username;
+    const { passageId } = req.params;
+    const userId = req.user.id;
 
     try {
         // Fetch the passage from the database
@@ -34,7 +34,6 @@ const getPassageWithQuestions = async (req, res) => {
             ],
             correctAnswer: row.correct_answer  // optional, exclude if answers shouldn’t be shared
         }));
-        console.log(passage, questions);
 
         res.status(200).json({ passage, questions });
     } catch (error) {
@@ -103,8 +102,7 @@ const submitUserAnswers = async (req, res) => {
 const getRandomPassage = async (req, res) => {
     const username = req.user.username;
     console.log(username);
-    const username = req.user.username;
-    console.log(username);
+
 
     try {
         // Fetch a random passage with the user's difficulty level that the user hasn't read yet
