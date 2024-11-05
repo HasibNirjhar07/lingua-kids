@@ -178,10 +178,35 @@ const getReadingProgress = async (req, res) => {
     }
 };
 
+// Fetch the last three reading exercises for the user
+const getReadingHistory = async (req, res) => {
+    const userId = req.user.username;
+
+    try {
+        // Fetch the last three passages the user has attempted
+        const historyResult = await pool.query(
+            'SELECT passage_id, score, timestamp FROM passage_reading_progress WHERE username = $1 ORDER BY timestamp DESC LIMIT 3',
+            [userId]
+        );
+
+        const readingHistory = historyResult.rows.map(row => ({
+            passageId: row.passage_id,
+            score: row.score,
+            timestamp: row.timestamp.toLocaleString(), // Format timestamp as needed
+        }));
+
+        res.status(200).json(readingHistory);
+    } catch (error) {
+        console.error('Error fetching reading history:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 
 module.exports = {
     getPassageWithQuestions,
     submitUserAnswers,
     getRandomPassage,
-    getReadingProgress
+    getReadingProgress,
+    getReadingHistory
 };

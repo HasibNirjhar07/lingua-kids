@@ -23,7 +23,6 @@ const SkillProgress = ({ skill, progress, color }) => (
 );
 
 const PerformanceGauge = () => {
-  // Generate lines for the radial effect
   const generateLines = () => {
     const lines = [];
     const numberOfLines = 30;
@@ -132,23 +131,9 @@ const Badge = ({ icon: Icon, title, description, color }) => (
 const LanguageProgress = () => {
   const [selectedSkill, setSelectedSkill] = useState('all');
   const [readingProgress, setReadingProgress] = useState(0); // State for reading progress
+  const [readingHistory, setReadingHistory] = useState([]); // State for reading history
 
-  const activeTimeData = [
-    { day: 'Mon', minutes: 45 },
-    { day: 'Tue', minutes: 60 },
-    { day: 'Wed', minutes: 30 },
-    { day: 'Thu', minutes: 75 },
-    { day: 'Fri', minutes: 50 },
-    { day: 'Sat', minutes: 40 },
-    { day: 'Sun', minutes: 55 },
-  ];
-
-  const exercises = {
-    reading: [
-      { title: "Reading Comprehension 1", score: 85, timestamp: "Today, 2:30 PM" },
-      { title: "Article Analysis", score: 92, timestamp: "Yesterday, 4:15 PM" },
-      { title: "Story Interpretation", score: 78, timestamp: "2 days ago" },
-    ],
+  const predefinedExercises = {
     writing: [
       { title: "Essay Writing", score: 88, timestamp: "Today, 1:20 PM" },
       { title: "Grammar Exercise", score: 95, timestamp: "Yesterday, 3:45 PM" },
@@ -163,12 +148,24 @@ const LanguageProgress = () => {
     ],
   };
 
-  // Fetch reading progress from the backend
+  const activeTimeData = [
+    { day: 'Mon', minutes: 45 },
+    { day: 'Tue', minutes: 60 },
+    { day: 'Wed', minutes: 30 },
+    { day: 'Thu', minutes: 75 },
+    { day: 'Fri', minutes: 50 },
+    { day: 'Sat', minutes: 40 },
+    { day: 'Sun', minutes: 55 },
+  ];
+
+  // Fetch reading progress and history from the backend
   useEffect(() => {
-    const fetchReadingProgress = async () => {
+    const fetchData = async () => {
       const token = localStorage.getItem('token'); // Assuming you're using tokens for authentication
+
+      // Fetch reading progress
       try {
-        const response = await fetch('http://localhost:3000/reading/progress', {
+        const progressResponse = await fetch('http://localhost:3000/reading/progress', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -176,18 +173,38 @@ const LanguageProgress = () => {
           },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          setReadingProgress(data.readingProgress); // Set the fetched reading progress
+        if (progressResponse.ok) {
+          const progressData = await progressResponse.json();
+          setReadingProgress(progressData.readingProgress); // Set the fetched reading progress
         } else {
-          console.error('Failed to fetch reading progress:', response.statusText);
+          console.error('Failed to fetch reading progress:', progressResponse.statusText);
         }
       } catch (error) {
         console.error('Error fetching reading progress:', error);
       }
+
+      // Fetch reading history
+      try {
+        const historyResponse = await fetch('http://localhost:3000/reading/history', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (historyResponse.ok) {
+          const historyData = await historyResponse.json();
+          setReadingHistory(historyData); // Set the fetched reading history
+        } else {
+          console.error('Failed to fetch reading history:', historyResponse.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching reading history:', error);
+      }
     };
 
-    fetchReadingProgress();
+    fetchData();
   }, []);
 
   return (
@@ -204,7 +221,7 @@ const LanguageProgress = () => {
             className="bg-white rounded-2xl p-6 shadow-md"
           >
             <h3 className="text-gray-600 font-medium mb-4 text-lg">Skill Progress</h3>
-            <SkillProgress skill="Reading" progress={readingProgress} color="bg-blue-500" /> {/* Use dynamic reading progress */}
+            <SkillProgress skill="Reading" progress={readingProgress} color="bg-blue-500" />
             <SkillProgress skill="Writing" progress={85} color="bg-green-500" />
             <SkillProgress skill="Speaking" progress={65} color="bg-yellow-500" />
             <SkillProgress skill="Listening" progress={80} color="bg-purple-500" />
@@ -229,28 +246,46 @@ const LanguageProgress = () => {
               >
                 All
               </button>
-              {Object.keys(exercises).map(skill => (
-                <button
-                  key={skill}
-                  onClick={() => setSelectedSkill(skill)}
-                  className={`pb-2 capitalize ${selectedSkill === skill ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
-                >
-                  {skill}
-                </button>
-              ))}
+              <button
+                onClick={() => setSelectedSkill('reading')}
+                className={`pb-2 capitalize ${selectedSkill === 'reading' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+              >
+                Reading
+              </button>
+              <button
+                onClick={() => setSelectedSkill('writing')}
+                className={`pb-2 capitalize ${selectedSkill === 'writing' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+              >
+                Writing
+              </button>
+              <button
+                onClick={() => setSelectedSkill('speaking')}
+                className={`pb-2 capitalize ${selectedSkill === 'speaking' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+              >
+                Speaking
+              </button>
+              <button
+                onClick={() => setSelectedSkill('listening')}
+                className={`pb-2 capitalize ${selectedSkill === 'listening' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+              >
+                Listening
+              </button>
             </div>
             
             <div className="space-y-2">
-              {(selectedSkill === 'all' ? exercises.reading : exercises[selectedSkill]).map((exercise, index) => (
+              {/* Show reading history for 'reading' skill and predefined exercises for others */}
+              {(selectedSkill === 'all' ? readingHistory : 
+                selectedSkill === 'reading' ? readingHistory :
+                selectedSkill === 'writing' ? predefinedExercises.writing :
+                selectedSkill === 'speaking' ? predefinedExercises.speaking :
+                predefinedExercises.listening
+              ).map((exercise, index) => (
                 <ExerciseItem
                   key={index}
-                  {...exercise}
-                  color={
-                    selectedSkill === 'reading' ? 'bg-blue-500' :
-                    selectedSkill === 'writing' ? 'bg-green-500' :
-                    selectedSkill === 'speaking' ? 'bg-yellow-500' :
-                    'bg-purple-500'
-                  }
+                  title={exercise.passageId || exercise.title} // Use passageId or title based on the exercise type
+                  score={exercise.score}
+                  timestamp={exercise.timestamp}
+                  color="bg-blue-500" // Modify color logic if needed
                 />
               ))}
             </div>
