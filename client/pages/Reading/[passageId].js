@@ -119,49 +119,51 @@ const PassagePage = () => {
                 <div className="mt-6 p-6 bg-yellow-100 rounded-2xl border-4 border-yellow-300 shadow-inner">
                     <p className="text-xl leading-relaxed">{passage.content}</p>
                 </div>
-
                 {questions.length > 0 && (
-                    <div className="mt-8">
-                        <h2 className="text-3xl font-bold text-blue-600 mb-4 flex items-center">
-                            <FaQuestion className="mr-2 text-green-500" />
-                            Magic Quiz Time!
-                        </h2>
-                        <ul className="space-y-6">
-                            {questions.map((question, index) => (
-                                <li key={question.id} className="bg-gradient-to-r from-green-200 to-blue-200 p-6 rounded-2xl animate-bounceIn shadow-lg">
-                                    <p className="font-bold text-2xl mb-4 flex items-center text-purple-700">
-                                        <FaStar className="mr-2 text-yellow-400" />
-                                        Question {index + 1}: {question.text}
-                                    </p>
-                                    <ul className="space-y-4">
-                                        {['1', '2'].map((optionId) => (
-                                            <li key={optionId} className="ml-4">
-                                                <label className="flex items-center space-x-3 cursor-pointer bg-white p-3 rounded-xl hover:bg-blue-100 transition duration-200">
-                                                    <input
-                                                        type="radio"
-                                                        name={`question-${question.id}`}
-                                                        value={optionId}
-                                                        checked={selectedAnswers[question.id] === optionId}
-                                                        onChange={() => handleOptionChange(question.id, optionId)}
-                                                        className="form-radio text-purple-600 h-6 w-6"
-                                                    />
-                                                    <span className="text-xl flex items-center font-semibold">
-                                                        {selectedAnswers[question.id] === optionId ? (
-                                                            <FaCheckCircle className="mr-2 text-green-500" />
-                                                        ) : (
-                                                            <FaTimesCircle className="mr-2 text-gray-300" />
-                                                        )}
-                                                        {question.options[parseInt(optionId) - 1]?.text}
-                                                    </span>
-                                                </label>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
+    <div className="mt-8">
+        <h2 className="text-3xl font-bold text-blue-600 mb-4 flex items-center">
+            <FaQuestion className="mr-2 text-green-500" />
+            Magic Quiz Time!
+        </h2>
+        <ul className="space-y-6">
+            {questions.map((question, index) => (
+                <li key={question.id} className="bg-gradient-to-r from-green-200 to-blue-200 p-6 rounded-2xl animate-bounceIn shadow-lg">
+                    <p className="font-bold text-2xl mb-4 flex items-center text-purple-700">
+                        <FaStar className="mr-2 text-yellow-400" />
+                        Question {index + 1}: {question.text}
+                    </p>
+                    <ul className="space-y-4">
+                        {question.options.map((option, optionIndex) => (
+                            <li key={option.id} className="ml-4">
+                                <label className="flex items-center space-x-3 cursor-pointer bg-white p-3 rounded-xl hover:bg-blue-100 transition duration-200">
+                                    <input
+                                        type="radio"
+                                        name={`question-${question.id}`}
+                                        value={option.id}
+                                        checked={selectedAnswers[question.id] === option.id}
+                                        onChange={() => handleOptionChange(question.id, option.id)}
+                                        className="form-radio text-purple-600 h-6 w-6"
+                                    />
+                                    <span className="text-xl flex items-center font-semibold">
+                                        {selectedAnswers[question.id] === option.id ? (
+                                            <FaCheckCircle className="mr-2 text-green-500" />
+                                        ) : (
+                                            <FaTimesCircle className="mr-2 text-gray-300" />
+                                        )}
+                                        {option.text}
+                                    </span>
+                                </label>
+                            </li>
+                        ))}
+                    </ul>
+                </li>
+            ))}
+        </ul>
+    </div>
+)}
+
+
+         
 
                 <button 
                     onClick={handleSubmitAnswers} 

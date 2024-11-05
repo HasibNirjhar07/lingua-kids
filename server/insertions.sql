@@ -26,7 +26,7 @@ VALUES
     ),
     (
         'The Big Tree',
-        'In our backyard, we have a big, old tree that has been there for many years. Birds come every morning and sing on its branches. When the wind blows, the tree\'s leaves dance and make a rustling sound. In summer, we sit under the tree for shade. Sometimes, my friends and I climb it to pick fruits. It\'s like a little world of its own, full of life.',
+        'In our backyard, we have a big, old tree that has been there for many years. Birds come every morning and sing on its branches. When the wind blows, the tree''s leaves dance and make a rustling sound. In summer, we sit under the tree for shade. Sometimes, my friends and I climb it to pick fruits. It''s like a little world of its own, full of life.',
         'Beginner'
     );
 

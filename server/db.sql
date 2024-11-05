@@ -1,4 +1,4 @@
-DB_USER = postgres DB_PASSWORD = pgadmin DB_NAME = testdb2
+DB_USER = postgres DB_PASSWORD = pgadmin DB_NAME = linguakids
 CREATE TABLE
     users (
         username VARCHAR(255) PRIMARY KEY,
