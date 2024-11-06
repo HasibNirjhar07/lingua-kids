@@ -212,4 +212,6 @@ const PassagePage = () => {
     );
 };
 
+PassagePage.hideNavbar = true;
+
 export default PassagePage;
