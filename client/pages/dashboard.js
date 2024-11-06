@@ -455,7 +455,7 @@ const Dashboard = () => {
     className="bg-gradient-to-br from-pink-400 to-pink-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 relative"
     whileHover={{ scale: 1.05, rotate: 3 }}
   >
-    <div className="absolute top-4 right-4 bg-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Intermediate</div>
+    <div className="absolute top-4 right-4 bg-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Beginner</div>
     <FaBookOpen className="text-white text-6xl mb-4 animate-pulse" />
     <h2 className="text-3xl font-bold text-white mb-2">Reading</h2>
     <p className="text-white text-xl mb-4">10 Passages</p>
@@ -492,7 +492,7 @@ const Dashboard = () => {
     className="bg-gradient-to-br from-blue-400 to-blue-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 relative"
     whileHover={{ scale: 1.05, rotate: -3 }}
   >
-    <div className="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Intermediate</div>
+    <div className="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Beginner</div>
     <FaPlay className="text-white text-6xl mb-4 animate-spin" />
     <h2 className="text-3xl font-bold text-white mb-2">Writing</h2>
     <p className="text-white text-xl mb-4">17 Words</p>
@@ -528,7 +528,7 @@ const Dashboard = () => {
     className="bg-gradient-to-br from-green-500 to-green-300 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 relative"
     whileHover={{ scale: 1.05, rotate: -3 }}
   >
-    <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Advanced</div>
+    <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Beginner</div>
     <FaMicrophone
       className="text-white text-6xl mb-4"
       style={{
