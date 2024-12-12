@@ -489,39 +489,43 @@ const Dashboard = () => {
 
   {/* Learn Words */}
   <motion.div
-    className="bg-gradient-to-br from-blue-400 to-blue-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 relative"
-    whileHover={{ scale: 1.05, rotate: -3 }}
-  >
-    <div className="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Beginner</div>
-    <FaPlay className="text-white text-6xl mb-4 animate-spin" />
-    <h2 className="text-3xl font-bold text-white mb-2">Writing</h2>
-    <p className="text-white text-xl mb-4">17 Words</p>
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      custom={2}
-      variants={progressVariants}
-      className="w-24 h-24 mx-auto mb-6"
+      className="bg-gradient-to-br from-blue-400 to-blue-600 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 relative"
+      whileHover={{ scale: 1.05, rotate: -3 }}
     >
-      <CircularProgressbar
-        value={progressData.learnWords}
-        text={`${progressData.learnWords}%`}
-        styles={buildStyles({
-          pathTransitionDuration: 2,
-          pathColor: "#3b82f6",
-          textColor: "#fff",
-          trailColor: "#e0f2fe",
-        })}
-      />
+      <div className="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+        Beginner
+      </div>
+      <FaPlay className="text-white text-6xl mb-4 animate-spin" />
+      <h2 className="text-3xl font-bold text-white mb-2">Writing</h2>
+      <p className="text-white text-xl mb-4">17 Words</p>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        custom={2}
+        variants={progressVariants}
+        className="w-24 h-24 mx-auto mb-6"
+      >
+        <CircularProgressbar
+          value={progressData.learnWords}
+          text={`${progressData.learnWords}%`}
+          styles={buildStyles({
+            pathTransitionDuration: 2,
+            pathColor: "#3b82f6",
+            textColor: "#fff",
+            trailColor: "#e0f2fe",
+          })}
+        />
+      </motion.div>
+      <motion.button
+        className="mt-6 bg-white text-blue-500 px-6 py-3 rounded-full text-xl font-bold hover:bg-blue-500 hover:text-white transition duration-300"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => router.push('/Writing/writingfrontpage')}
+      >
+        Start
+      </motion.button>
     </motion.div>
-    <motion.button
-      className="mt-6 bg-white text-blue-500 px-6 py-3 rounded-full text-xl font-bold hover:bg-blue-500 hover:text-white transition duration-300"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-    >
-      Start
-    </motion.button>
-  </motion.div>
+
 
   {/* Speaking */}
   <motion.div

@@ -54,10 +54,6 @@ const RecordPage = () => {
       };
       mediaRecorder.start();
     });
-
-    recognition.onend = () => {
-      handleStopRecording();
-    }
   };
 
   const handleStopRecording = () => {

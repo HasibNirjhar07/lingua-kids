@@ -134,7 +134,7 @@ export default function WelcomeBackPage() {
           
           <h2 className="text-4xl font-bold mb-6 text-indigo-900">App Features</h2>
           
-          <div className="flex flex-wrap justify-center">
+          <div className="flex flex-wrap justify-center ">
             {features.map((feature, index) => (
               <motion.div
                 key={index}

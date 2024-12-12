@@ -50,7 +50,7 @@ const Navbar = () => {
             <motion.a
               key={item.text}
               onClick={() => handleScrollToSection(item.id)}
-              className="hover:underline text-white flex items-center cursor-pointer"
+              className="hover:underline text-indigo-700 flex items-center cursor-pointer"
               whileHover={{ scale: 1.1 }}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
