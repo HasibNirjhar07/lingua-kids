@@ -442,6 +442,7 @@ const Dashboard = () => {
       />
     </motion.div>
     <motion.button
+     onClick={() => router.push("/Listening/listeningfrontpage")}
       className="mt-6 bg-white text-yellow-500 px-6 py-3 rounded-full text-xl font-bold hover:bg-yellow-500 hover:text-white transition duration-300"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
