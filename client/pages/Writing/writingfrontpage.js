@@ -22,7 +22,7 @@ const WritingFrontPage = () => {
   }, []);
 
   const handleStart = () => {
-    router.push('/Writing/response');
+    router.push('/Writing/writing');
   };
 
   const handleBackToDashboard = () => {
