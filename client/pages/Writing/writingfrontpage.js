@@ -2,17 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Sidebar from '@/components/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPen, FaClock, FaQuestionCircle, FaArrowLeft, FaPlay } from 'react-icons/fa';
+import { FaPen, FaClock, FaArrowLeft, FaPlay } from 'react-icons/fa';
 
-const WritingFrontPage = () => {
+const WritingFrontPage = ({ userDifficulty = 'Beginner' }) => {
   const [currentTip, setCurrentTip] = useState(0);
   const router = useRouter();
   const tips = [
     "Plan your thoughts briefly before you start writing.",
     "Focus on clarity and coherence in your sentences.",
     "Keep your sentences grammatically correct and on topic.",
-    "Manage your time wisely to complete your response within 3 minutes."
+    "Manage your time wisely to complete your response."
   ];
+
+  const difficultyDetails = {
+    Beginner: { time: "10 minutes", length: "60-100 words" },
+    Intermediate: { time: "20 minutes", length: "120-200 words" },
+    Advanced: { time: "30 minutes", length: "250-300 words" }
+  };
+
+  const { time, length } = difficultyDetails[userDifficulty];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -53,39 +61,40 @@ const WritingFrontPage = () => {
               Writing Assessment
             </h1>
             <p className="text-green-700 mb-4">
-              Welcome to the writing assessment! You will be given a prompt such as a word, picture, or question. Write at least 5-10 sentences about it within 3 minutes. This exercise evaluates your coherence, grammar, and creativity.
+              Welcome to the writing assessment! You will be given a prompt to write about. Your task evaluates your coherence, grammar, and creativity.
             </p>
             <h2 className="text-xl font-semibold text-blue-700 mb-2">Instructions:</h2>
             <ul className="list-disc list-inside text-red-600 mb-4">
-              <li>You will see a word, picture, or question as a prompt.</li>
-              <li>Write at least 5-10 sentences within 3 minutes.</li>
+              <li>You will see a prompt to respond to.</li>
+              <li>Write within the specified word count and time limit.</li>
               <li>Focus on clarity, grammar, and staying on topic.</li>
               <li>Submit your response before the timer ends.</li>
             </ul>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {[{
+            {[
+              {
                 icon: FaClock,
                 title: "Time Limit",
-                value: "3 minutes",
+                value: time,
                 color: "bg-white border-red-500"
-              },
-              {
-                icon: FaQuestionCircle,
-                title: "Prompt Type",
-                value: "Word, Picture, or Question",
-                color: "bg-white border-yellow-500"
               },
               {
                 icon: FaPen,
                 title: "Response Length",
-                value: "5-10 sentences",
+                value: length,
                 color: "bg-white border-green-500"
+              },
+              {
+                icon: FaPen,
+                title: "Difficulty",
+                value: userDifficulty,
+                color: "bg-white border-blue-500"
               }
             ].map((item, index) => (
-              <motion.div 
-                key={index} 
+              <motion.div
+                key={index}
                 className={`rounded-lg shadow-md p-4 flex flex-col items-center justify-center ${item.color} border-l-4`}
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}

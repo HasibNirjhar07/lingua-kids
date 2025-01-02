@@ -4,16 +4,17 @@ import Timer from '../../components/timer';
 import { FaPaperPlane, FaTimes, FaPenNib, FaRocket, FaStar } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import Modal from '../../components/Modal';
+import axios from 'axios';
 import confetti from 'canvas-confetti';
 
 const WritingPage = () => {
   const router = useRouter();
   const [answer, setAnswer] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [evaluationResult, setEvaluationResult] = useState(null);
   const [timerDuration, setTimerDuration] = useState(180);
   const textareaRef = useRef(null);
 
-  // Playful hover and focus effects
   const handleTextareaHover = () => {
     if (textareaRef.current) {
       textareaRef.current.style.transform = 'scale(1.02)';
@@ -27,17 +28,34 @@ const WritingPage = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (answer.trim().length > 0) {
-      setShowModal(true);
-      // Colorful and exciting confetti
-      confetti({
-        particleCount: 300,
-        spread: 120,
-        origin: { y: 0.6 },
-        colors: ['#ff6b6b', '#4ecdc4', '#feca57', '#ff9ff3', '#54a0ff', '#48dbfb', '#ff9ff3'],
-        shapes: ['star', 'circle']
-      });
+      try {
+        // Analyze user writing
+        const response = await axios .post('/analyze', { text: answer });
+        const scores = response.data.scores;
+
+        // Calculate cumulative score
+        const cumulativeScore = calculateCumulativeScore(scores);
+
+        // Submit writing score
+        await axios.post('/submit', { promptId: 'somePromptId', score: cumulativeScore }); // Replace 'somePromptId' with the actual prompt ID
+
+        setEvaluationResult({ scores, cumulativeScore });
+        setShowModal(true);
+
+        // Celebrate with confetti
+        confetti({
+          particleCount: 300,
+          spread: 120,
+          origin: { y: 0.6 },
+          colors: ['#ff6b6b', '#4ecdc4', '#feca57', '#ff9ff3', '#54a0ff', '#48dbfb'],
+          shapes: ['star', 'circle'],
+        });
+      } catch (error) {
+        console.error('Error analyzing text or submitting score:', error);
+        alert('Something went wrong! Please try again.');
+      }
     } else {
       alert('Oops! Write your amazing story first! 📝');
     }
@@ -57,34 +75,11 @@ const WritingPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Playful background elements */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        <motion.div 
-          className="absolute top-10 left-10 text-yellow-300"
-          animate={{ 
-            rotate: [0, 360],
-            scale: [0.7, 1, 0.7]
-          }}
-          transition={{ 
-            duration: 10, 
-            repeat: Infinity, 
-            ease: "easeInOut" 
-          }}
-        >
+        <motion.div className="absolute top-10 left-10 text-yellow-300" animate={{ rotate: [0, 360], scale: [0.7, 1, 0.7] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}>
           <FaStar size={40} />
         </motion.div>
-        <motion.div 
-          className="absolute bottom-20 right-20 text-blue-300"
-          animate={{ 
-            rotate: [0, -360],
-            scale: [0.7, 1, 0.7]
-          }}
-          transition={{ 
-            duration: 12, 
-            repeat: Infinity, 
-            ease: "easeInOut" 
-          }}
-        >
+        <motion.div className="absolute bottom-20 right-20 text-blue-300" animate={{ rotate: [0, -360], scale: [0.7, 1, 0.7] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}>
           <FaRocket size={50} />
         </motion.div>
       </div>
@@ -93,16 +88,12 @@ const WritingPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 50, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ 
-            duration: 0.5, 
-            type: "spring", 
-            stiffness: 120 
-          }}
+          transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
           className="bg-white shadow-2xl rounded-xl overflow-hidden border-4 border-indigo-200"
         >
           <div className="p-8">
             <div className="flex items-center justify-between mb-6">
-              <motion.h1 
+              <motion.h1
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
@@ -110,14 +101,14 @@ const WritingPage = () => {
               >
                 <FaPenNib className="mr-3 text-indigo-500 animate-bounce" /> Writing Adventure
               </motion.h1>
-              <Timer 
-                duration={timerDuration} 
-                onTimeUp={() => handleSubmit()} 
-                isRunning={true} 
+              <Timer
+                duration={timerDuration}
+                onTimeUp={() => handleSubmit()}
+                isRunning={true}
               />
             </div>
 
-            <motion.div 
+            <motion.div
               initial={{ x: 50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -138,7 +129,7 @@ const WritingPage = () => {
               onMouseEnter={handleTextareaHover}
               onMouseLeave={handleTextareaBlur}
               onFocus={handleTextareaHover}
-              onBlur={handleTextareaBlur}
+              on Blur={handleTextareaBlur}
               className="w-full min-h-[300px] p-4 border-2 border-dashed border-purple-200 rounded-lg 
               focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
               transition duration-200 bg-blue-50 hover:shadow-lg
@@ -158,10 +149,7 @@ const WritingPage = () => {
               </motion.button>
 
               <motion.button
-                whileHover={{ 
-                  scale: 1.1,
-                  rotate: [0, 10, -10, 0]
-                }}
+                whileHover={{ scale: 1.1, rotate: [0, 10, -10, 0] }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleSubmit}
                 className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 
@@ -186,13 +174,25 @@ const WritingPage = () => {
               >
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold text-white mb-4">
-                    Mission Accomplished! 🎉
+                    Evaluation Results 🎉
                   </h2>
-                  <p className="text-white mb-6">
-                    Your writing adventure is complete and ready to be reviewed!
-                  </p>
+                  {evaluationResult ? (
+                    <>
+                      <ul className="text-white text-left mb-4">
+                        {evaluationResult.scores.map((score, index) => (
+                          <li key={index}>
+                            <strong>{score.label}:</strong> {score.score}
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="text-lg text-white font-bold">
+                        Cumulative Score: {evaluationResult.cumulativeScore} / 100
+                      </p>
+                    </>
+                  ) : (
+                    <p>Loading results...</p>
+                  )}
                 </div>
-
                 <button
                   onClick={handleCloseModal}
                   className="w-full py-3 bg-white text-purple-600 

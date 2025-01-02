@@ -1,4 +1,3 @@
-
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -7,15 +6,20 @@ const db = require('./db');
 const authRoutes = require('./routes/auth');
 const cookieParser = require('cookie-parser');
 const readingTestRoutes = require('./routes/readingTest');
+const writingRoutes = require('./routes/writingRoutes');
+const speechRecognitionRoutes = require('./routes/speechRecognition');
 
 //app.use(cors());
 app.use(cors({
     origin: 'http://localhost:3001', // Your Next.js frontend URL
     credentials: true, // Allow credentials to be sent
 }));
-app.use(express.json());
+app.use(express.json()); // This is crucial for handling JSON requests
+app.use(express.urlencoded({ extended: true })); // This is crucial for handling form data
+app.use('/writing', writingRoutes);
 app.use('/auth', authRoutes); 
 app.use('/reading', readingTestRoutes);
+app.use('/speaking', speechRecognitionRoutes);
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 

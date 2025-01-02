@@ -147,9 +147,18 @@ CREATE TABLE Speaking_Progress (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE Writing_Prompt (
+    prompt_id VARCHAR(10) PRIMARY KEY,
+    prompt TEXT NOT NULL,
+    difficulty VARCHAR(20) CHECK (
+        difficulty IN ('Beginner', 'Intermediate', 'Advanced')
+    )
+);
+
 CREATE TABLE Writing_Progress (
     progress_id SERIAL PRIMARY KEY,
     username VARCHAR(255) REFERENCES Users(username),
+    prompt_id VARCHAR(10) REFERENCES Writing_Prompt(prompt_id),
     score INT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
