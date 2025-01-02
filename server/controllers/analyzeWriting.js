@@ -1,7 +1,7 @@
 const axios = require("axios");
 require("dotenv").config();
 
-const HF_API_TOKEN = "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";
+const HF_API_TOKEN = process.env.HF_API_TOKEN;
 
 const weights = {
   cohesion: 5,
