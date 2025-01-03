@@ -179,16 +179,16 @@ CREATE TABLE Streak(
     username VARCHAR(255) REFERENCES Users(username),
     streak INT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 
 CREATE TABLE Achievements(
     achievement_id SERIAL PRIMARY KEY,
-    achievement VARCHAR(255) NOT NULL,
-)
+    achievement VARCHAR(255) NOT NULL
+);
 
 CREATE TABLE User_Achievements(
     user_achievement_id SERIAL PRIMARY KEY,
     username VARCHAR(255) REFERENCES Users(username),
     achievement_id INT REFERENCES Achievements(achievement_id),
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);

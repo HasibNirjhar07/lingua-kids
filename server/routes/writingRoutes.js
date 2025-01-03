@@ -6,11 +6,11 @@ const authMiddleware = require('../middlewares/authMiddleware');
 // Route to get a random writing prompt
 router.get('/random', authMiddleware, getRandomPrompt);
 
-// Route to submit a writing score
-router.post('/submit', authMiddleware, submitWritingScore);
-
 // Route to analyze user writing
 router.post('/analyze', authMiddleware, analyzeUserWriting);
+
+// Route to submit a writing score
+router.post('/submit', authMiddleware, submitWritingScore);
 
 // Route to get writing progress
 router.get('/progress', authMiddleware, getWritingProgress);
