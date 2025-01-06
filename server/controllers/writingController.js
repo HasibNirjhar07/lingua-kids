@@ -110,16 +110,26 @@ const submitWritingScore = async (req, res) => {
 
         const existingScore = existingProgressResult.rows[0]?.score;
 
-        // Only update if the new score is better
-        if (!existingScore || score > existingScore) {
-            await pool.query(
-                `INSERT INTO Writing_Progress (username, prompt_id, score, timestamp)
-                 VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
-                 ON CONFLICT (username, prompt_id)
-                 DO UPDATE SET score = $3, timestamp = CURRENT_TIMESTAMP`,
-                [username, promptId, score]
-            );
-        }
+       // Only update if the new score is better
+if (!existingScore || score > existingScore) {
+    if (existingScore) {
+        // Update the existing row
+        await pool.query(
+            `UPDATE Writing_Progress 
+             SET score = $1, timestamp = CURRENT_TIMESTAMP 
+             WHERE username = $2 AND prompt_id = $3`,
+            [score, username, promptId]
+        );
+    } else {
+        // Insert a new row
+        await pool.query(
+            `INSERT INTO Writing_Progress (username, prompt_id, score, timestamp)
+             VALUES ($1, $2, $3, CURRENT_TIMESTAMP)`,
+            [username, promptId, score]
+        );
+    }
+}
+
 
         res.status(200).json({ message: 'Score submitted successfully' });
     } catch (error) {

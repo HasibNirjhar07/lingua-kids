@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@types/dom-speech-recognition": "^0.0.4",
-    "axios": "^1.7.9"
+    "axios": "^1.7.9",
+    "transformer": "^1.2.8"
   }
 }
