@@ -34,7 +34,7 @@ CREATE SEQUENCE intermediate_passage_seq START 101;
 CREATE SEQUENCE advanced_passage_seq START 101;
 
 
-CREATE OR REPLACE FUNCTION generate_passage_id() 
+CREATE OR REPLACE FUNCTION generate_passage_id()
 RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.difficulty = 'Beginner' THEN
