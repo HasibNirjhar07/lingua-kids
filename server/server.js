@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const readingTestRoutes = require('./routes/readingTest');
 const writingRoutes = require('./routes/writingRoutes');
 const speechRecognitionRoutes = require('./routes/speechRecognition');
+const listeningRoutes = require('./routes/listeningRoutes');
 
 //app.use(cors());
 app.use(cors({
@@ -20,6 +21,7 @@ app.use('/writing', writingRoutes);
 app.use('/auth', authRoutes); 
 app.use('/reading', readingTestRoutes);
 app.use('/speaking', speechRecognitionRoutes);
+app.use('/listening', listeningRoutes);
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 

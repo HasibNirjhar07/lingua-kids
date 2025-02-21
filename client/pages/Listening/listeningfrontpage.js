@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Sidebar from '@/components/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlay, FaClock, FaBook, FaArrowLeft, FaHeadphones, FaQuestionCircle, FaVolumeUp } from 'react-icons/fa';
+import { FaHeadphones, FaClock, FaQuestionCircle, FaArrowLeft, FaPlay, FaVolumeUp, FaMicrophone } from 'react-icons/fa';
 
 const ListeningFrontPage = () => {
   const [currentTip, setCurrentTip] = useState(0);
@@ -21,8 +21,26 @@ const ListeningFrontPage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleStart = () => {
-    router.push('/Listening/listening');
+  const handleStart = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:3000/reading/random', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const passage = await response.json();
+        router.push(`/Listening/${passage.passage_id}`);
+      } else {
+        console.error('Failed to fetch a random passage', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching passage:', error);
+    }
   };
 
   const handleBackToDashboard = () => {
@@ -39,6 +57,7 @@ const ListeningFrontPage = () => {
           transition={{ duration: 0.5 }}
           className="max-w-4xl mx-auto"
         >
+          {/* Title and Intro */}
           <motion.div 
             className="bg-white rounded-2xl shadow-xl mb-6 p-6 border-l-4 border-pink-500"
             whileHover={{ boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
@@ -60,6 +79,7 @@ const ListeningFrontPage = () => {
             </ul>
           </motion.div>
 
+          {/* Info Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             {[{
                 icon: FaClock,
@@ -74,8 +94,8 @@ const ListeningFrontPage = () => {
                 color: "bg-teal-100 border-teal-500"
               },
               {
-                icon: FaBook,
-                title: "Passage Length",
+                icon: FaVolumeUp,
+                title: "Audio Length",
                 value: "Short",
                 color: "bg-purple-100 border-purple-500"
               }
@@ -93,6 +113,7 @@ const ListeningFrontPage = () => {
             ))}
           </div>
 
+          {/* Tip Section */}
           <motion.div 
             className="bg-white rounded-2xl shadow-xl mb-6 p-6 border-l-4 border-teal-500"
             whileHover={{ boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
@@ -113,6 +134,7 @@ const ListeningFrontPage = () => {
             </AnimatePresence>
           </motion.div>
 
+          {/* Buttons */}
           <div className="flex justify-between">
             <motion.button
               onClick={handleBackToDashboard}
