@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Timer from '../../components/timer';
 import confetti from 'canvas-confetti';
-import { FaBook, FaHeadphones, FaCheckCircle, FaTimesCircle, FaClock, FaRocket, FaTrophy } from 'react-icons/fa';
-
+import { 
+  FaHeadphones, FaCheckCircle, FaPlay, FaPause, FaRocket, 
+  FaTrophy, FaClock, FaWaveSquare, FaMagic, FaArrowRight
+} from 'react-icons/fa';
 import Modal from '../../components/Modal';
 
 const ListeningPage = () => {
-    const router = useRouter();
-    const { passageId } = router.query;
     const [passage, setPassage] = useState(null);
     const [blanks, setBlanks] = useState([]);
     const [answers, setAnswers] = useState({});
@@ -18,7 +18,13 @@ const ListeningPage = () => {
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [timeTaken, setTimeTaken] = useState(0);
     const [startTime, setStartTime] = useState(null);
-    const [audio, setAudio] = useState(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [audioProgress, setAudioProgress] = useState(0);
+    const [showInstructions, setShowInstructions] = useState(true);
+    const audioRef = useRef(null);
+    const synthRef = useRef(null);
+    const router = useRouter();
+    const { passageId } = router.query;
 
     useEffect(() => {
         if (passageId) {
@@ -34,23 +40,22 @@ const ListeningPage = () => {
     
                 if (response.ok) {
                     const data = await response.json();
-    
-                    // Log the full data to understand its structure
-                    console.log('Fetched data:', data);
-    
-                    // Check if passage exists and if it has questions
                     if (data && data.questions) {
                         setPassage(data);
-
-                        // Map questions to blanks structure
-                        const mappedBlanks = data.questions.map((question, index) => ({
+                        const mappedBlanks = data.questions.map((question) => ({
                             text: question.question_text,
                             correctAnswer: question.correct_answer,
-                            question_id: question.question_id,  // Make sure the question_id is present
+                            question_id: question.question_id,
                         }));
-
-                        setBlanks(mappedBlanks); // Set the mapped blanks
-                        setAudio(new Audio(data.audioUrl || '')); // Set the audio source (fallback if null)
+                        setBlanks(mappedBlanks);
+                        
+                        // Set up audio if available
+                        if (data.audioUrl) {
+                            audioRef.current = new Audio(data.audioUrl);
+                            audioRef.current.addEventListener('ended', () => {
+                                setIsPlaying(false);
+                            });
+                        }
                         setStartTime(Date.now());
                     } else {
                         console.error('Invalid passage data or missing questions array');
@@ -62,6 +67,17 @@ const ListeningPage = () => {
             };
             fetchPassage();
         }
+        
+        // Cleanup function
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current.removeEventListener('ended', () => {});
+            }
+            if (synthRef.current) {
+                window.speechSynthesis.cancel();
+            }
+        };
     }, [passageId]);
     
     const handleAnswerChange = (index, value) => {
@@ -76,7 +92,7 @@ const ListeningPage = () => {
 
         const userId = localStorage.getItem('userId');
         const submissionAnswers = Object.keys(answers).map((index) => ({
-            questionId: blanks[index].question_id,  // Assuming each blank has a `question_id`
+            questionId: blanks[index].question_id,
             userAnswer: answers[index],
         }));
 
@@ -87,7 +103,6 @@ const ListeningPage = () => {
         };
 
         try {
-            // Send the answers to the backend
             const token = localStorage.getItem('token');
             const response = await fetch(`http://localhost:3000/listening/submit`, {
                 method: 'POST',
@@ -100,21 +115,20 @@ const ListeningPage = () => {
 
             if (response.ok) {
                 const result = await response.json();
-                setCorrectAnswers(result.score); // Assuming the backend returns a score
+                setCorrectAnswers(result.score);
                 setShowModal(true);
                 confetti({
-                    particleCount: 100,
-                    spread: 70,
+                    particleCount: 150,
+                    spread: 80,
                     origin: { y: 0.6 },
+                    colors: ['#FF3E9D', '#7E30E1', '#4DA6FF']
                 });
             } else {
                 const errorData = await response.json();
                 console.error('Failed to submit answers:', errorData);
-                // Handle error if needed
             }
         } catch (error) {
             console.error('Error submitting answers:', error);
-            // Handle error if needed
         }
     };
 
@@ -128,104 +142,221 @@ const ListeningPage = () => {
         router.push('/dashboard');
     };
 
-    const handlePlayAudio = () => {
-        if (passage && passage.content) {
-            // Get the passage content
-            const passageText = passage.content;
-    
-            // Use the SpeechSynthesis API to speak the passage text
-            const speech = new SpeechSynthesisUtterance(passageText);
-    
-            // Set the language and voice properties (optional)
-            speech.lang = 'en-US'; // You can set to another language if needed
-            speech.volume = 1; // Volume (0 to 1)
-            speech.rate = 1; // Speed of speech (0.1 to 10)
-            speech.pitch = 1; // Pitch (0 to 2)
-    
-            // Speak the text
-            window.speechSynthesis.speak(speech);
+    const handlePlayPause = () => {
+        if (isPlaying) {
+            if (audioRef.current) {
+                audioRef.current.pause();
+            } else if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.pause();
+            }
+            setIsPlaying(false);
+        } else {
+            if (audioRef.current) {
+                audioRef.current.play();
+                setIsPlaying(true);
+            } else if (passage && passage.content) {
+                if (window.speechSynthesis.paused) {
+                    window.speechSynthesis.resume();
+                    setIsPlaying(true);
+                    return;
+                }
+                
+                // Fallback to speech synthesis
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
+                
+                const speech = new SpeechSynthesisUtterance(passage.content);
+                speech.lang = 'en-US';
+                speech.rate = 1;
+                speech.pitch = 1;
+                
+                speech.onend = () => {
+                    setIsPlaying(false);
+                };
+                
+                synthRef.current = speech;
+                window.speechSynthesis.speak(speech);
+                setIsPlaying(true);
+            }
         }
     };
 
+    // Function to transform question text with embedded input fields
+    const renderQuestionWithInput = (questionText, index) => {
+        const parts = questionText.split('_______');
+        
+        if (parts.length !== 2) {
+            return (
+                <div className="mb-6 p-6 bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
+                    <p className="text-lg text-gray-700 mb-3">{questionText}</p>
+                    <div className="relative">
+                        <input
+                            type="text"
+                            value={answers[index] || ''}
+                            onChange={(e) => handleAnswerChange(index, e.target.value)}
+                            className="w-full p-3 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                            disabled={isTimeUp || !isTimerRunning}
+                            placeholder="Your answer here..."
+                        />
+                        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-pink-500 rounded-b-lg transform scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300"></div>
+                    </div>
+                </div>
+            );
+        }
+        
+        return (
+            <div className="mb-6 p-6 bg-white rounded-xl shadow-lg text-lg transition-all duration-300 hover:shadow-xl">
+                <div className="flex flex-wrap items-center">
+                    <span className="text-gray-700">{parts[0]}</span>
+                    <div className="relative mx-2 my-1 group">
+                        <input
+                            type="text"
+                            value={answers[index] || ''}
+                            onChange={(e) => handleAnswerChange(index, e.target.value)}
+                            className="px-4 py-2 border-b-2 border-purple-500 w-40 text-center focus:outline-none focus:ring-2 focus:ring-purple-400 rounded transition-all"
+                            disabled={isTimeUp || !isTimerRunning}
+                            placeholder="..."
+                        />
+                        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-pink-500 rounded-b-lg transform scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300"></div>
+                    </div>
+                    <span className="text-gray-700">{parts[1]}</span>
+                </div>
+            </div>
+        );
+    };
+
     if (!passage) return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
-            <FaHeadphones className="animate-bounce text-8xl text-yellow-300 mb-4" />
-            <p className="text-3xl font-bold text-white">Preparing your listening quest...</p>
+        <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+            <div className="relative">
+                <FaHeadphones className="animate-bounce text-8xl text-white opacity-80 mb-6" />
+                <div className="absolute inset-0 bg-white blur-xl opacity-20 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-4xl font-bold text-white drop-shadow-lg">Loading your audio adventure...</p>
+            <div className="mt-8 w-64 h-2 bg-white/20 rounded-full overflow-hidden">
+                <div className="h-full bg-white/80 rounded-full animate-loadingBar"></div>
+            </div>
         </div>
     );
 
     return (
-        <div className="p-8 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 min-h-screen">
-            <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-2xl p-8 animate-fadeIn">
-                <h1 className="text-4xl font-bold text-purple-600 mb-4 flex items-center">
-                    <FaBook className="mr-2 text-yellow-500" />
-                    {passage.title}
+        <div className="p-6 md:p-12 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
+            <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 animate-fadeIn">
+                <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-6 text-center">
+                    {passage.title || "Listening Adventure"}
                 </h1>
-                <Timer duration={600} onTimeUp={handleTimeUp} isRunning={isTimerRunning} />
-                <div className="mt-6 p-6 bg-yellow-100 rounded-2xl border-4 border-yellow-300 shadow-inner">
-                    <p className="text-xl leading-relaxed">{passage.content}</p>
+                
+                <div className="sticky top-4 z-10 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 mb-8">
+                    <Timer duration={600} onTimeUp={handleTimeUp} isRunning={isTimerRunning} />
                 </div>
-                <button
-                    className="mt-8 bg-gradient-to-r from-green-400 to-blue-500 text-white px-8 py-4 rounded-full text-2xl font-bold shadow-lg hover:from-green-500 hover:to-blue-600 transform hover:scale-105 transition duration-200 ease-in-out flex items-center justify-center"
-                    onClick={handlePlayAudio}
-                >
-                    <FaHeadphones className="mr-3 animate-pulse" />
-                    Play Listening Passage
-                </button>
-
-                <div className="mt-8">
-                    <h2 className="text-3xl font-bold text-blue-600 mb-4 flex items-center">
-                        <FaCheckCircle className="mr-2 text-green-500" />
-                        Fill-in-the-Blanks!
-                    </h2>
-                    <div className="space-y-4">
-                        {blanks.map((blank, index) => (
-                            <div key={index} className="flex items-center space-x-4 mb-4">
-                                <span className="font-semibold text-lg">{blank.text}</span>
-                                <input
-                                    type="text"
-                                    value={answers[index] || ''}
-                                    onChange={(e) => handleAnswerChange(index, e.target.value)}
-                                    className="p-2 border rounded-lg w-full"
-                                    disabled={isTimeUp || !isTimerRunning}
-                                />
+                
+                {/* Simplified Audio Player */}
+                <div className="mt-8 mb-12">
+                    <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 rounded-2xl shadow-lg">
+                        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
+                            <div className="flex flex-col space-y-4">
+                                {/* Simple Player controls */}
+                                <div className="flex justify-center items-center">
+                                    <button
+                                        className="flex items-center justify-center rounded-full w-20 h-20 bg-white shadow-lg transition transform hover:scale-105 active:scale-95"
+                                        onClick={handlePlayPause}
+                                    >
+                                        {isPlaying ? 
+                                            <FaPause className="text-pink-600 text-3xl" /> : 
+                                            <FaPlay className="text-purple-600 text-3xl ml-1" />
+                                        }
+                                    </button>
+                                </div>
+                                
+                                {/* Status indicator */}
+                                <div className="flex items-center justify-center mt-4">
+                                    <div className={`w-4 h-4 rounded-full ${isPlaying ? 'bg-green-500 animate-pulse' : 'bg-gray-300'} mr-2`}></div>
+                                    <p className="text-center text-white font-medium">
+                                        {isPlaying ? "Listening in progress..." : "Press Play to begin your audio journey"}
+                                    </p>
+                                </div>
                             </div>
-                        ))}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-12">
+                    <h2 className="text-3xl font-bold text-indigo-600 mb-6 flex items-center">
+                        <FaCheckCircle className="mr-3 text-green-500" />
+                        Complete the Challenge!
+                    </h2>
+                    
+                    <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-200/50 to-pink-200/50 rounded-3xl blur-xl -z-10"></div>
+                        <div className="space-y-6 mt-6 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
+                            {blanks.map((blank, index) => (
+                                <div key={index} className="group transition transform hover:scale-102 hover:-translate-y-1">
+                                    {renderQuestionWithInput(blank.text, index)}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
                 <button
                     onClick={handleSubmitAnswers}
-                    className="mt-8 bg-gradient-to-r from-green-400 to-blue-500 text-white px-8 py-4 rounded-full text-2xl font-bold shadow-lg hover:from-green-500 hover:to-blue-600 transform hover:scale-105 transition duration-200 ease-in-out flex items-center justify-center"
+                    className="mt-12 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-8 py-5 rounded-full text-2xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-300 flex items-center justify-center w-full"
                     disabled={isTimeUp || !isTimerRunning}
                 >
-                    <FaRocket className="mr-3 animate-pulse" />
-                    {isTimeUp ? "Time's up, brave hero!" : "Submit Answers!"}
+                    <div className="relative">
+                        <FaRocket className="mr-3 animate-pulse" />
+                        <div className="absolute inset-0 bg-white blur-xl opacity-30 rounded-full animate-ping"></div>
+                    </div>
+                    {isTimeUp ? "Time's up!" : "Submit Your Answers"}
                 </button>
             </div>
 
             <Modal isOpen={showModal} onClose={handleCloseModal}>
-                <div className="text-center bg-gradient-to-r from-purple-300 via-pink-300 to-red-300 p-8 rounded-3xl">
-                    <h2 className="text-4xl font-bold mb-6 text-purple-800">Your Magical Results!</h2>
-                    <div className="flex flex-col items-center space-y-6">
-                        <div className="flex items-center bg-white p-4 rounded-full shadow-lg">
-                            <FaTrophy className="text-yellow-500 text-5xl mr-4" />
-                            <span className="text-3xl font-bold text-purple-700">
-                                {correctAnswers} out of {blanks.length} correct
-                            </span>
+                <div className="text-center bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 p-8 rounded-3xl">
+                    <div className="absolute inset-0 bg-white/20 rounded-3xl backdrop-blur-sm -z-10"></div>
+                    <h2 className="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">
+                        Your Epic Results!
+                    </h2>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg flex flex-col items-center transform transition hover:scale-105">
+                            <div className="w-20 h-20 rounded-full bg-yellow-100 flex items-center justify-center mb-4">
+                                <FaTrophy className="text-yellow-500 text-4xl" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-600 mb-1">Score</h3>
+                            <p className="text-3xl font-bold text-indigo-700">
+                                {correctAnswers} <span className="text-xl text-gray-500">/ {blanks.length}</span>
+                            </p>
+                            <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
+                                <div 
+                                    className="bg-gradient-to-r from-indigo-500 to-pink-500 h-2 rounded-full" 
+                                    style={{width: `${(correctAnswers / blanks.length) * 100}%`}}
+                                ></div>
+                            </div>
                         </div>
-                        <div className="flex items-center bg-white p-4 rounded-full shadow-lg">
-                            <FaClock className="text-blue-500 text-5xl mr-4" />
-                            <span className="text-3xl font-bold text-purple-700">
-                                Time: {Math.floor(timeTaken / 60)}m {timeTaken % 60}s
-                            </span>
+                        
+                        <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg flex flex-col items-center transform transition hover:scale-105">
+                            <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                                <FaClock className="text-blue-500 text-4xl" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-600 mb-1">Time Taken</h3>
+                            <p className="text-3xl font-bold text-indigo-700">
+                                {Math.floor(timeTaken / 60)}
+                                <span className="text-xl text-gray-500">m </span>
+                                {timeTaken % 60}
+                                <span className="text-xl text-gray-500">s</span>
+                            </p>
+                            <p className="text-sm text-gray-500 mt-2">
+                                {timeTaken < 300 ? "Impressive speed!" : "Take your time, accuracy matters!"}
+                            </p>
                         </div>
                     </div>
+                    
                     <button
-                        className="mt-8 bg-gradient-to-r from-red-400 to-pink-500 text-white px-6 py-3 rounded-full text-xl font-bold hover:from-red-500 hover:to-pink-600 transition transform hover:scale-105"
+                        className="mt-10 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-300"
                         onClick={handleCloseModal}
                     >
-                        Back to Your Quest Map!
+                        Continue Your Journey
                     </button>
                 </div>
             </Modal>
