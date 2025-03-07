@@ -4,7 +4,7 @@ import Timer from '../../components/timer';
 import confetti from 'canvas-confetti';
 import { 
   FaHeadphones, FaCheckCircle, FaPlay, FaPause, FaRocket, 
-  FaTrophy, FaClock, FaWaveSquare, FaMagic, FaArrowRight
+  FaTrophy, FaClock, FaWaveSquare, FaMagic, FaArrowRight,FaCheck
 } from 'react-icons/fa';
 import Modal from '../../components/Modal';
 
@@ -25,6 +25,8 @@ const ListeningPage = () => {
     const synthRef = useRef(null);
     const router = useRouter();
     const { passageId } = router.query;
+
+    const [isPassageCompleted, setIsPassageCompleted] = useState(false);
 
     useEffect(() => {
         if (passageId) {
@@ -132,17 +134,16 @@ const ListeningPage = () => {
         }
     };
 
-    const handleTimeUp = () => {
-        setIsTimeUp(true);
-        handleSubmitAnswers();
-    };
-
     const handleCloseModal = () => {
         setShowModal(false);
         router.push('/dashboard');
     };
 
     const handlePlayPause = () => {
+        if (isPassageCompleted) {
+            return;
+        }
+    
         if (isPlaying) {
             if (audioRef.current) {
                 audioRef.current.pause();
@@ -160,28 +161,55 @@ const ListeningPage = () => {
                     setIsPlaying(true);
                     return;
                 }
-                
-                // Fallback to speech synthesis
+    
                 if (window.speechSynthesis.speaking) {
                     window.speechSynthesis.cancel();
                 }
-                
+    
                 const speech = new SpeechSynthesisUtterance(passage.content);
                 speech.lang = 'en-US';
                 speech.rate = 1;
-                speech.pitch = 1;
-                
+                speech.pitch = 1.2; // Slightly higher pitch for a feminine tone
+    
+                // Select a female voice
+                const voices = window.speechSynthesis.getVoices();
+                const femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Samantha') || voice.name.includes('Google UK English Female'));
+    
+                if (femaleVoice) {
+                    speech.voice = femaleVoice;
+                }
+    
                 speech.onend = () => {
                     setIsPlaying(false);
+                    setIsPassageCompleted(true);
                 };
-                
+    
                 synthRef.current = speech;
                 window.speechSynthesis.speak(speech);
                 setIsPlaying(true);
             }
         }
     };
-
+    
+    
+    // Update your handleTimeUp function
+    const handleTimeUp = () => {
+        // Stop any active audio or speech
+        if (audioRef.current) {
+            audioRef.current.pause();
+        }
+        
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
+        
+        setIsPlaying(false);
+        // Mark passage as completed when timer ends
+        setIsPassageCompleted(true);
+        
+        // Any other logic you might have for when time is up
+    };
+    
     // Function to transform question text with embedded input fields
     const renderQuestionWithInput = (questionText, index) => {
         const parts = questionText.split('_______');
@@ -241,45 +269,56 @@ const ListeningPage = () => {
 
     return (
         <div className="p-6 md:p-12 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
-            <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 animate-fadeIn">
-                <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-6 text-center">
-                    {passage.title || "Listening Adventure"}
-                </h1>
-                
-                <div className="sticky top-4 z-10 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 mb-8">
-                    <Timer duration={600} onTimeUp={handleTimeUp} isRunning={isTimerRunning} />
-                </div>
-                
-                {/* Simplified Audio Player */}
-                <div className="mt-8 mb-12">
-                    <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 rounded-2xl shadow-lg">
-                        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
-                            <div className="flex flex-col space-y-4">
-                                {/* Simple Player controls */}
-                                <div className="flex justify-center items-center">
-                                    <button
-                                        className="flex items-center justify-center rounded-full w-20 h-20 bg-white shadow-lg transition transform hover:scale-105 active:scale-95"
-                                        onClick={handlePlayPause}
-                                    >
-                                        {isPlaying ? 
-                                            <FaPause className="text-pink-600 text-3xl" /> : 
-                                            <FaPlay className="text-purple-600 text-3xl ml-1" />
-                                        }
-                                    </button>
-                                </div>
-                                
-                                {/* Status indicator */}
-                                <div className="flex items-center justify-center mt-4">
-                                    <div className={`w-4 h-4 rounded-full ${isPlaying ? 'bg-green-500 animate-pulse' : 'bg-gray-300'} mr-2`}></div>
-                                    <p className="text-center text-white font-medium">
-                                        {isPlaying ? "Listening in progress..." : "Press Play to begin your audio journey"}
-                                    </p>
-                                </div>
-                            </div>
+        <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 animate-fadeIn">
+            <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-6 text-center">
+                {passage.title || "Listening Adventure"}
+            </h1>
+            
+            <div className="sticky top-4 z-20 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 mb-8">
+                <Timer duration={600} onTimeUp={handleTimeUp} isRunning={isTimerRunning} />
+            </div>
+            
+            {/* Standard Floating Audio Player */}
+            <div className="sticky top-28 z-10 mx-auto max-w-sm mb-6">
+                <div className="bg-white/90 backdrop-blur-sm rounded-full shadow-md border border-gray-200 p-2">
+                    <div className="flex items-center justify-between px-2">
+                        <button
+                            className={`flex items-center justify-center rounded-full w-10 h-10 transition ${
+                                isPassageCompleted 
+                                    ? 'bg-gray-400 cursor-not-allowed' 
+                                    : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 active:scale-95'
+                            }`}
+                            onClick={handlePlayPause}
+                            disabled={isPassageCompleted}
+                        >
+                            {isPlaying ? (
+                                <FaPause className="text-white text-sm" />
+                            ) : isPassageCompleted ? (
+                                <FaCheck className="text-white text-sm" />
+                            ) : (
+                                <FaPlay className="text-white text-sm ml-0.5" />
+                            )}
+                        </button>
+                        
+                        <div className="flex items-center ml-3">
+                            <div className={`w-2 h-2 rounded-full ${
+                                isPlaying 
+                                    ? 'bg-green-500 animate-pulse' 
+                                    : isPassageCompleted 
+                                        ? 'bg-blue-500' 
+                                        : 'bg-gray-300'
+                            } mr-2`}></div>
+                            <span className="text-gray-700 text-sm font-medium mr-2">
+                                {isPlaying 
+                                    ? "Now Playing" 
+                                    : isPassageCompleted 
+                                        ? "Completed" 
+                                        : "Ready"}
+                            </span>
                         </div>
                     </div>
                 </div>
-
+            </div>
                 <div className="mt-12">
                     <h2 className="text-3xl font-bold text-indigo-600 mb-6 flex items-center">
                         <FaCheckCircle className="mr-3 text-green-500" />
