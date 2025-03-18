@@ -136,12 +136,10 @@ const LanguageProgress = () => {
   const [readingHistory, setReadingHistory] = useState([]);
   const [listeningProgress, setListeningProgress] = useState(0);
   const [listeningHistory, setListeningHistory] = useState([]);
+  const [writingProgress, setWritingProgress] = useState(0);
+  const [writingHistory, setWritingHistory] = useState([]);
 
   const predefinedExercises = {
-    writing: [
-      { title: "Essay Writing", score: 88, timestamp: "Today, 1:20 PM" },
-      { title: "Grammar Exercise", score: 95, timestamp: "Yesterday, 3:45 PM" },
-    ],
     speaking: [
       { title: "Pronunciation Test", score: 82, timestamp: "Today, 11:30 AM" },
       { title: "Conversation Practice", score: 90, timestamp: "Yesterday, 2:00 PM" },
@@ -158,7 +156,7 @@ const LanguageProgress = () => {
     { day: 'Sun', minutes: 55 },
   ];
 
-  // Fetch reading and listening progress and history from the backend
+  // Fetch reading, listening, and writing progress and history from the backend
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('token'); // Assuming you're using tokens for authentication
@@ -242,6 +240,46 @@ const LanguageProgress = () => {
       } catch (error) {
         console.error('Error fetching listening history:', error);
       }
+
+      // Fetch writing progress
+      try {
+        const writingResponse = await fetch('http://localhost:3000/writing/progress', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (writingResponse.ok) {
+          const writingData = await writingResponse.json();
+          setWritingProgress(writingData.writingProgress);
+        } else {
+          console.error('Failed to fetch writing progress:', writingResponse.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching writing progress:', error);
+      }
+
+      // Fetch writing history
+      try {
+        const writingHistoryResponse = await fetch('http://localhost:3000/writing/history', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (writingHistoryResponse.ok) {
+          const writingHistoryData = await writingHistoryResponse.json();
+          setWritingHistory(writingHistoryData);
+        } else {
+          console.error('Failed to fetch writing history:', writingHistoryResponse.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching writing history:', error);
+      }
     };
 
     fetchData();
@@ -253,12 +291,13 @@ const LanguageProgress = () => {
       case 'all':
         return [
           ...readingHistory.map(item => ({ ...item, type: 'reading' })),
-          ...listeningHistory.map(item => ({ ...item, type: 'listening' }))
+          ...listeningHistory.map(item => ({ ...item, type: 'listening' })),
+          ...writingHistory.map(item => ({ ...item, type: 'writing' }))
         ];
       case 'reading':
         return readingHistory.map(item => ({ ...item, type: 'reading' }));
       case 'writing':
-        return predefinedExercises.writing.map(item => ({ ...item, type: 'writing' }));
+        return writingHistory.map(item => ({ ...item, type: 'writing' }));
       case 'speaking':
         return predefinedExercises.speaking.map(item => ({ ...item, type: 'speaking' }));
       case 'listening':
@@ -277,6 +316,15 @@ const LanguageProgress = () => {
     return "bg-blue-500"; // Default color
   };
 
+  // Function to get the appropriate title for exercise items
+  const getExerciseTitle = (exercise) => {
+    if (exercise.type === 'reading') return exercise.passageId || "Reading Exercise";
+    if (exercise.type === 'listening') return exercise.audioId || "Listening Exercise";
+    if (exercise.type === 'writing') return `Prompt ${exercise.promptId}` || "Writing Exercise";
+    if (exercise.type === 'speaking') return exercise.title || "Speaking Exercise";
+    return "Exercise";
+  };
+
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-100">
       <Sidebar />
@@ -292,7 +340,7 @@ const LanguageProgress = () => {
           >
             <h3 className="text-gray-600 font-medium mb-4 text-lg">Skill Progress</h3>
             <SkillProgress skill="Reading" progress={readingProgress} color="bg-blue-500" />
-            <SkillProgress skill="Writing" progress={85} color="bg-green-500" />
+            <SkillProgress skill="Writing" progress={writingProgress} color="bg-green-500" />
             <SkillProgress skill="Speaking" progress={65} color="bg-yellow-500" />
             <SkillProgress skill="Listening" progress={listeningProgress} color="bg-purple-500" />
           </motion.div>
@@ -346,7 +394,7 @@ const LanguageProgress = () => {
               {getExercisesToDisplay().map((exercise, index) => (
                 <ExerciseItem
                   key={index}
-                  title={exercise.passageId || exercise.audioId || exercise.title}
+                  title={getExerciseTitle(exercise)}
                   score={exercise.score}
                   timestamp={exercise.timestamp}
                   color={getExerciseColor(exercise)}

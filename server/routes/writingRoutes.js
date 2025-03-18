@@ -18,4 +18,5 @@ router.get('/progress', authMiddleware, getWritingProgress);
 // Route to fetch writing history
 router.get('/history', authMiddleware, getWritingHistory);
 
+
 module.exports = router;

@@ -140,65 +140,82 @@ if (!existingScore || score > existingScore) {
 
 // Fetch writing progress
 const getWritingProgress = async (req, res) => {
-    const username = req.user.username;
+    const userId = req.user.username;
 
     try {
-        // Fetch the total number of prompts
+        // Fetch all writing prompts the user has attempted
+        const progressResult = await pool.query(
+            "SELECT score FROM writing_progress WHERE username = $1",
+            [userId]
+        );
+
+        // Fetch the total number of writing prompts
         const totalPromptsResult = await pool.query(
-            'SELECT COUNT(*) AS total FROM Writing_Prompt WHERE difficulty = (SELECT difficulty FROM users WHERE username = $1)',
-            [username]
+            "SELECT COUNT(*) AS count FROM writing_prompt WHERE difficulty = $1",
+            ["Beginner"] // Adjust difficulty level as needed
         );
 
-        const totalPrompts = parseInt(totalPromptsResult.rows[0]?.total || 0, 10);
+        const totalPrompts = parseInt(totalPromptsResult.rows[0].count, 10); // Convert to integer
 
-        // Fetch the number of completed prompts with score >= 80
-        const completedPromptsResult = await pool.query(
-            `SELECT COUNT(*) AS completed 
-             FROM Writing_Progress progress
-             JOIN Writing_Prompt wp ON progress.prompt_id = wp.prompt_id
-             WHERE progress.username = $1 AND progress.score >= 80`,
-            [username]
-        );
+        if (totalPrompts === 0) {
+            return res.status(404).json({ error: "No writing prompts available" });
+        }
 
-        const completedPrompts = parseInt(completedPromptsResult.rows[0]?.completed || 0, 10);
+        const promptValue = 100 / totalPrompts; // Calculate the value of each prompt
 
-        const progress = totalPrompts > 0 ? (completedPrompts / totalPrompts) * 100 : 0;
+        // Calculate total score based on user's attempts
+        const totalScore = progressResult.rows.reduce((acc, row) => {
+            const score = row.score;
 
-        res.status(200).json({ progress });
+            // Determine the contribution based on the score ranges
+            if (score <= 20) {
+                return acc + (promptValue * 20 / 100); // Score 0-20 contributes 20%
+            } else if (score <= 40) {
+                return acc + (promptValue * 40 / 100); // Score 21-40 contributes 40%
+            } else if (score <= 60) {
+                return acc + (promptValue * 60 / 100); // Score 41-60 contributes 60%
+            } else if (score <= 80) {
+                return acc + (promptValue * 80 / 100); // Score 61-80 contributes 80%
+            } else {
+                return acc + (promptValue * 100 / 100); // Score 81-100 contributes 100%
+            }
+        }, 0);
+
+        // Calculate overall writing progress percentage
+        const writingProgress = Math.min(totalScore, 100); // Ensure progress does not exceed 100%
+
+        res.status(200).json({ writingProgress });
     } catch (error) {
-        console.error('Error fetching writing progress:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error fetching writing progress:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 };
 
 // Fetch the last three writing activities for the user
+// Fetch the last three writing exercises for the user
 const getWritingHistory = async (req, res) => {
-    const username = req.user.username;
+    const userId = req.user.username;
 
     try {
-        // Fetch the last three prompts the user has attempted
+        // Fetch the last three writing exercises the user has attempted
         const historyResult = await pool.query(
-            `SELECT wp.prompt_id, wp.prompt, progress.score, progress.timestamp
-             FROM Writing_Progress progress
-             JOIN Writing_Prompt wp ON progress.prompt_id = wp.prompt_id
-             WHERE progress.username = $1
-             ORDER BY progress.timestamp DESC LIMIT 3`,
-            [username]
+            'SELECT prompt_id, score, timestamp FROM writing_progress WHERE username = $1 ORDER BY timestamp DESC LIMIT 3',
+            [userId]
         );
 
-        const history = historyResult.rows.map(row => ({
+        const writingHistory = historyResult.rows.map(row => ({
             promptId: row.prompt_id,
-            prompt: row.prompt,
             score: row.score,
-            timestamp: row.timestamp.toLocaleString(),
+            timestamp: row.timestamp.toLocaleString(), // Format timestamp as needed
         }));
 
-        res.status(200).json(history);
+        res.status(200).json(writingHistory);
     } catch (error) {
         console.error('Error fetching writing history:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 module.exports = {
     getRandomPrompt,
