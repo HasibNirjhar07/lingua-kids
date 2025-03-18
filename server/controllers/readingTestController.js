@@ -252,6 +252,49 @@ const getLeaderboard = async (req, res) => {
     }
   };
 
+  const getUserStreak = async (req, res) => {
+    const userId = req.user.username;
+
+    try {
+        // Query all three tables for the user's submission dates
+        const query = `
+            SELECT DISTINCT DATE(timestamp) AS submission_date FROM passage_reading_progress WHERE username = $1
+            UNION
+            SELECT DISTINCT DATE(timestamp) FROM passage_listening_progress WHERE username = $1
+            UNION
+            SELECT DISTINCT DATE(timestamp) FROM writing_progress WHERE username = $1
+            ORDER BY submission_date DESC;
+        `;
+
+        const result = await pool.query(query, [userId]);
+        const submissionDates = result.rows.map(row => row.submission_date);
+
+        if (submissionDates.length === 0) {
+            return res.status(200).json({ streak: 0 }); // No activity, streak is 0
+        }
+
+        let streak = 1;
+        let prevDate = submissionDates[0];
+
+        for (let i = 1; i < submissionDates.length; i++) {
+            const currentDate = submissionDates[i];
+            const diff = (prevDate - currentDate) / (1000 * 60 * 60 * 24); // Difference in days
+
+            if (diff === 1) {
+                streak++; // Consecutive day, increase streak
+            } else if (diff > 1) {
+                break; // Streak breaks if there's a gap
+            }
+
+            prevDate = currentDate;
+        }
+
+        res.status(200).json({ streak });
+    } catch (error) {
+        console.error('Error calculating user streak:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 
 module.exports = {
@@ -260,5 +303,6 @@ module.exports = {
     getRandomPassage,
     getReadingProgress,
     getReadingHistory, 
-    getLeaderboard
+    getLeaderboard,
+    getUserStreak
 };

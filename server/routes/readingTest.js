@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { getPassageWithQuestions, submitUserAnswers, getRandomPassage , getReadingProgress , getReadingHistory , getLeaderboard} = require('../controllers/readingTestController');
+const { getPassageWithQuestions, submitUserAnswers, getRandomPassage , getReadingProgress , getReadingHistory , getLeaderboard , getUserStreak} = require('../controllers/readingTestController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
+router.get('/streak', authMiddleware, getUserStreak);
 // Route to get a passage and its related questions
 router.get('/passage/:passageId',authMiddleware, getPassageWithQuestions);
 
@@ -19,6 +20,8 @@ router.get('/progress', authMiddleware, getReadingProgress);
 router.get('/history', authMiddleware, getReadingHistory);
 
 router.get("/:type", getLeaderboard);
+
+
 
 
 module.exports = router;
