@@ -200,7 +200,58 @@ const getReadingHistory = async (req, res) => {
         console.error('Error fetching reading history:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+
+    
 };
+
+const getLeaderboard = async (req, res) => {
+    const { type } = req.params;
+    const table = type === "listening" ? "passage_listening_progress" : "passage_reading_progress";
+    
+    try {
+      let query;
+      
+      if (type === "listening") {
+        // For listening: score is already the raw number of correct answers
+        query = `
+          SELECT 
+            u.username, 
+            COUNT(p.passage_id) AS passages_attempted, 
+            SUM(p.score) AS total_score, 
+            (SUM(p.score) * 1.0) / (COUNT(p.passage_id) * 5) AS accuracy, 
+            (COUNT(p.passage_id) * 10) + ((SUM(p.score) * 1.0) / (COUNT(p.passage_id) * 5) * 90) AS final_score 
+          FROM ${table} p 
+          JOIN users u ON p.username = u.username 
+          GROUP BY u.username 
+          ORDER BY final_score DESC 
+          LIMIT 10
+        `;
+      } else {
+        // For reading: convert percentage score back to raw number first
+        // If score is stored as percentage (0-100%), we multiply by 5 and divide by 100 to get raw score
+        query = `
+          SELECT 
+            u.username, 
+            COUNT(p.passage_id) AS passages_attempted, 
+            SUM(p.score * 5 / 100) AS total_score, 
+            (SUM(p.score * 5 / 100) * 1.0) / (COUNT(p.passage_id) * 5) AS accuracy, 
+            (COUNT(p.passage_id) * 10) + ((SUM(p.score * 5 / 100) * 1.0) / (COUNT(p.passage_id) * 5) * 90) AS final_score 
+          FROM ${table} p 
+          JOIN users u ON p.username = u.username 
+          GROUP BY u.username 
+          ORDER BY final_score DESC 
+          LIMIT 10
+        `;
+      }
+      
+      const { rows } = await pool.query(query);
+      res.json({ leaderboard: rows });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server Error" });
+    }
+  };
+
 
 
 module.exports = {
@@ -208,5 +259,6 @@ module.exports = {
     submitUserAnswers,
     getRandomPassage,
     getReadingProgress,
-    getReadingHistory
+    getReadingHistory, 
+    getLeaderboard
 };

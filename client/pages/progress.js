@@ -96,7 +96,7 @@ const PerformanceGauge = () => {
 };
 
 // Exercise Item Component with Timestamp
-const ExerciseItem = ({ title, score, timestamp, color }) => (
+const ExerciseItem = ({ title, score, timestamp, color, isListening }) => (
   <motion.div 
     whileHover={{ scale: 1.02 }}
     className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm mb-2"
@@ -109,7 +109,9 @@ const ExerciseItem = ({ title, score, timestamp, color }) => (
       </div>
     </div>
     <div className="text-right">
-      <div className="text-lg font-bold text-gray-800">{score}/100</div>
+      <div className="text-lg font-bold text-gray-800">
+        {isListening ? `${Math.round((score / 5) * 100)}/100` : `${score}/100`}
+      </div>
     </div>
   </motion.div>
 );
@@ -130,8 +132,10 @@ const Badge = ({ icon: Icon, title, description, color }) => (
 
 const LanguageProgress = () => {
   const [selectedSkill, setSelectedSkill] = useState('all');
-  const [readingProgress, setReadingProgress] = useState(0); // State for reading progress
-  const [readingHistory, setReadingHistory] = useState([]); // State for reading history
+  const [readingProgress, setReadingProgress] = useState(0);
+  const [readingHistory, setReadingHistory] = useState([]);
+  const [listeningProgress, setListeningProgress] = useState(0);
+  const [listeningHistory, setListeningHistory] = useState([]);
 
   const predefinedExercises = {
     writing: [
@@ -141,10 +145,6 @@ const LanguageProgress = () => {
     speaking: [
       { title: "Pronunciation Test", score: 82, timestamp: "Today, 11:30 AM" },
       { title: "Conversation Practice", score: 90, timestamp: "Yesterday, 2:00 PM" },
-    ],
-    listening: [
-      { title: "Audio Comprehension", score: 87, timestamp: "Today, 10:15 AM" },
-      { title: "Dialogue Analysis", score: 93, timestamp: "Yesterday, 5:30 PM" },
     ],
   };
 
@@ -158,7 +158,7 @@ const LanguageProgress = () => {
     { day: 'Sun', minutes: 55 },
   ];
 
-  // Fetch reading progress and history from the backend
+  // Fetch reading and listening progress and history from the backend
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('token'); // Assuming you're using tokens for authentication
@@ -175,7 +175,7 @@ const LanguageProgress = () => {
 
         if (progressResponse.ok) {
           const progressData = await progressResponse.json();
-          setReadingProgress(progressData.readingProgress); // Set the fetched reading progress
+          setReadingProgress(progressData.readingProgress);
         } else {
           console.error('Failed to fetch reading progress:', progressResponse.statusText);
         }
@@ -195,17 +195,87 @@ const LanguageProgress = () => {
 
         if (historyResponse.ok) {
           const historyData = await historyResponse.json();
-          setReadingHistory(historyData); // Set the fetched reading history
+          setReadingHistory(historyData);
         } else {
           console.error('Failed to fetch reading history:', historyResponse.statusText);
         }
       } catch (error) {
         console.error('Error fetching reading history:', error);
       }
+
+      // Fetch listening progress
+      try {
+        const listeningResponse = await fetch(`http://localhost:3000/listening/progress`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (listeningResponse.ok) {
+          const listeningData = await listeningResponse.json();
+          setListeningProgress(listeningData.listeningProgress);
+        } else {
+          console.error('Failed to fetch listening progress:', listeningResponse.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching listening progress:', error);
+      }
+
+      // Fetch listening history
+      try {
+        const response = await fetch('http://localhost:3000/listening/history', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (response.ok) {
+          const listeningHistoryData = await response.json();
+          setListeningHistory(listeningHistoryData);
+        } else {
+          console.error('Failed to fetch listening history:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching listening history:', error);
+      }
     };
 
     fetchData();
   }, []);
+
+  // Function to determine which exercises to display based on selected skill
+  const getExercisesToDisplay = () => {
+    switch (selectedSkill) {
+      case 'all':
+        return [
+          ...readingHistory.map(item => ({ ...item, type: 'reading' })),
+          ...listeningHistory.map(item => ({ ...item, type: 'listening' }))
+        ];
+      case 'reading':
+        return readingHistory.map(item => ({ ...item, type: 'reading' }));
+      case 'writing':
+        return predefinedExercises.writing.map(item => ({ ...item, type: 'writing' }));
+      case 'speaking':
+        return predefinedExercises.speaking.map(item => ({ ...item, type: 'speaking' }));
+      case 'listening':
+        return listeningHistory.map(item => ({ ...item, type: 'listening' }));
+      default:
+        return [];
+    }
+  };
+
+  // Function to determine appropriate color based on exercise type
+  const getExerciseColor = (exercise) => {
+    if (exercise.type === 'reading') return "bg-blue-500";
+    if (exercise.type === 'listening') return "bg-purple-500";
+    if (exercise.type === 'writing') return "bg-green-500";
+    if (exercise.type === 'speaking') return "bg-yellow-500";
+    return "bg-blue-500"; // Default color
+  };
 
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -224,7 +294,7 @@ const LanguageProgress = () => {
             <SkillProgress skill="Reading" progress={readingProgress} color="bg-blue-500" />
             <SkillProgress skill="Writing" progress={85} color="bg-green-500" />
             <SkillProgress skill="Speaking" progress={65} color="bg-yellow-500" />
-            <SkillProgress skill="Listening" progress={80} color="bg-purple-500" />
+            <SkillProgress skill="Listening" progress={listeningProgress} color="bg-purple-500" />
           </motion.div>
 
           {/* Average Performance */}
@@ -273,19 +343,14 @@ const LanguageProgress = () => {
             </div>
             
             <div className="space-y-2">
-              {/* Show reading history for 'reading' skill and predefined exercises for others */}
-              {(selectedSkill === 'all' ? readingHistory : 
-                selectedSkill === 'reading' ? readingHistory :
-                selectedSkill === 'writing' ? predefinedExercises.writing :
-                selectedSkill === 'speaking' ? predefinedExercises.speaking :
-                predefinedExercises.listening
-              ).map((exercise, index) => (
+              {getExercisesToDisplay().map((exercise, index) => (
                 <ExerciseItem
                   key={index}
-                  title={exercise.passageId || exercise.title} // Use passageId or title based on the exercise type
+                  title={exercise.passageId || exercise.audioId || exercise.title}
                   score={exercise.score}
                   timestamp={exercise.timestamp}
-                  color="bg-blue-500" // Modify color logic if needed
+                  color={getExerciseColor(exercise)}
+                  isListening={exercise.type === 'listening'}
                 />
               ))}
             </div>

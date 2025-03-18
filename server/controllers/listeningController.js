@@ -91,4 +91,81 @@ const submitListeningAnswers = async (req, res) => {
     }
 };
 
-module.exports = { getListeningPassage, submitListeningAnswers };
+// Function to calculate listening progress
+const getListeningProgress = async (req, res) => {
+    const userId = req.user.username;
+
+    try {
+        // Fetch all passages the user has attempted in listening
+        const progressResult = await pool.query(
+            'SELECT score FROM passage_listening_progress WHERE username = $1',
+            [userId]
+        );
+
+        // Fetch the total number of passages
+        const totalPassagesResult = await pool.query(
+            'SELECT COUNT(*) AS count FROM passages WHERE difficulty = $1',
+            ['Beginner'] // Adjust difficulty level if needed
+        );
+        const totalPassages = parseInt(totalPassagesResult.rows[0].count, 10);
+
+        if (totalPassages === 0) {
+            return res.status(404).json({ error: 'No passages available' });
+        }
+
+        const passageValue = 100 / totalPassages; // Value of each passage
+
+        // Calculate total score based on user's attempts
+        const totalScore = progressResult.rows.reduce((acc, row) => {
+            const score = row.score;
+
+            if (score <= 20) {
+                return acc + (passageValue * 20 / 100);
+            } else if (score <= 40) {
+                return acc + (passageValue * 40 / 100);
+            } else if (score <= 60) {
+                return acc + (passageValue * 60 / 100);
+            } else if (score <= 80) {
+                return acc + (passageValue * 80 / 100);
+            } else {
+                return acc + (passageValue * 100 / 100);
+            }
+        }, 0);
+
+        // Calculate overall listening progress percentage
+        const listeningProgress = Math.min(totalScore, 100);
+
+        res.status(200).json({ listeningProgress });
+    } catch (error) {
+        console.error('Error fetching listening progress:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+
+};
+
+const getListeningistory = async (req, res) => {
+    const userId = req.user.username;
+
+    try {
+        // Fetch the last three passages the user has attempted
+        const historyResult = await pool.query(
+            'SELECT passage_id, score, timestamp FROM passage_listening_progress WHERE username = $1 ORDER BY timestamp DESC LIMIT 3',
+            [userId]
+        );
+
+        const readingHistory = historyResult.rows.map(row => ({
+            passageId: row.passage_id,
+            score: row.score,
+            timestamp: row.timestamp.toLocaleString(), // Format timestamp as needed
+        }));
+
+        res.status(200).json(readingHistory);
+    } catch (error) {
+        console.error('Error fetching reading history:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+
+module.exports = { getListeningPassage, submitListeningAnswers, getListeningProgress , getListeningistory}; ;
