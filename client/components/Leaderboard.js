@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FaTrophy, FaUser, FaHeadphones, FaBookOpen } from "react-icons/fa";
+import { FaTrophy, FaUser, FaHeadphones, FaBookOpen, FaPen, FaMicrophone } from "react-icons/fa";
 
 const Leaderboard = ({ user }) => {
   const [leaderboardType, setLeaderboardType] = useState("listening");
@@ -77,6 +77,26 @@ const Leaderboard = ({ user }) => {
             }`}
           >
             <FaBookOpen className="mr-2" /> Reading
+          </button>
+          <button
+            onClick={() => setLeaderboardType("writing")}
+            className={`flex items-center px-4 py-2 rounded-full transition-all ${
+              leaderboardType === "writing"
+                ? "bg-indigo-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            <FaPen className="mr-2" /> Writing
+          </button>
+          <button
+            onClick={() => setLeaderboardType("speaking")}
+            className={`flex items-center px-4 py-2 rounded-full transition-all ${
+              leaderboardType === "speaking"
+                ? "bg-indigo-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            <FaMicrophone className="mr-2" /> Speaking
           </button>
         </div>
       </div>

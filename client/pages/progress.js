@@ -374,25 +374,39 @@ const LanguageProgress = () => {
 
   // Function to determine which exercises to display based on selected skill
   const getExercisesToDisplay = () => {
+    let exercises = [];
+    
     switch (selectedSkill) {
       case "all":
-        return [
+        exercises = [
           ...readingHistory.map((item) => ({ ...item, type: "reading" })),
           ...listeningHistory.map((item) => ({ ...item, type: "listening" })),
           ...writingHistory.map((item) => ({ ...item, type: "writing" })),
           ...speakingHistory.map((item) => ({ ...item, type: "speaking" })),
         ];
+        break;
       case "reading":
-        return readingHistory.map((item) => ({ ...item, type: "reading" }));
+        exercises = readingHistory.map((item) => ({ ...item, type: "reading" }));
+        break;
       case "writing":
-        return writingHistory.map((item) => ({ ...item, type: "writing" }));
+        exercises = writingHistory.map((item) => ({ ...item, type: "writing" }));
+        break;
       case "speaking":
-        return speakingHistory.map((item) => ({ ...item, type: "speaking" }));
+        exercises = speakingHistory.map((item) => ({ ...item, type: "speaking" }));
+        break;
       case "listening":
-        return listeningHistory.map((item) => ({ ...item, type: "listening" }));
+        exercises = listeningHistory.map((item) => ({ ...item, type: "listening" }));
+        break;
       default:
-        return [];
+        exercises = [];
     }
+    
+    // Sort exercises by timestamp from most recent to oldest
+    return exercises.sort((a, b) => {
+      const dateA = new Date(a.timestamp);
+      const dateB = new Date(b.timestamp);
+      return dateB - dateA; // Sort in descending order (newest first)
+    });
   };
 
   // Function to determine appropriate color based on exercise type
