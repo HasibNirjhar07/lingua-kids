@@ -155,7 +155,7 @@ const LanguageProgress = () => {
     { day: "Sun", minutes: 55 },
   ];
 
-  // Fetch reading, listening, and writing progress and history from the backend
+  // Fetch reading, listening, writing, and speaking progress and history from the backend
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token"); // Assuming you're using tokens for authentication
@@ -290,6 +290,32 @@ const LanguageProgress = () => {
         console.error("Error fetching writing progress:", error);
       }
 
+      // Fetch writing history
+      try {
+        const writingHistoryResponse = await fetch(
+          "http://localhost:3000/writing/history",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (writingHistoryResponse.ok) {
+          const writingHistoryData = await writingHistoryResponse.json();
+          setWritingHistory(writingHistoryData);
+        } else {
+          console.error(
+            "Failed to fetch writing history:",
+            writingHistoryResponse.statusText
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching writing history:", error);
+      }
+
       // Fetch speaking progress
       try {
         const speakingResponse = await fetch(
@@ -316,10 +342,10 @@ const LanguageProgress = () => {
         console.error("Error fetching speaking progress:", error);
       }
 
-      // Fetch writing history
+      // Fetch speaking history
       try {
-        const writingHistoryResponse = await fetch(
-          "http://localhost:3000/writing/history",
+        const speakingHistoryResponse = await fetch(
+          "http://localhost:3000/speaking/history",
           {
             method: "GET",
             headers: {
@@ -329,38 +355,13 @@ const LanguageProgress = () => {
           }
         );
 
-        if (writingHistoryResponse.ok) {
-          const writingHistoryData = await writingHistoryResponse.json();
-          setWritingHistory(writingHistoryData);
-        } else {
-          console.error(
-            "Failed to fetch writing history:",
-            writingHistoryResponse.statusText
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching writing history:", error);
-      }
-    };
-
-    // Fetch Speaking History
-    const speakingHistoryResponse = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/speaking/history", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const speakingHistoryData = await response.json();
+        if (speakingHistoryResponse.ok) {
+          const speakingHistoryData = await speakingHistoryResponse.json();
           setSpeakingHistory(speakingHistoryData);
         } else {
           console.error(
             "Failed to fetch speaking history:",
-            response.statusText
+            speakingHistoryResponse.statusText
           );
         }
       } catch (error) {
