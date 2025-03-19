@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
-import { motion } from 'framer-motion';
-import { Clock, Medal, Trophy, Star } from 'lucide-react';
-import Sidebar from '@/components/Sidebar';
+import React, { useState, useEffect } from "react";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { motion } from "framer-motion";
+import { Clock, Medal, Trophy, Star } from "lucide-react";
+import Sidebar from "@/components/Sidebar";
 
 // Progress Bar Component
 const SkillProgress = ({ skill, progress, color }) => (
@@ -64,7 +64,11 @@ const PerformanceGauge = () => {
     >
       <h3 className="text-gray-600 font-medium mb-4">Average Performance</h3>
       <div className="relative">
-        <svg width="200" height="200" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <svg
+          width="200"
+          height="200"
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        >
           {generateLines()}
         </svg>
         <motion.div
@@ -97,7 +101,7 @@ const PerformanceGauge = () => {
 
 // Exercise Item Component with Timestamp
 const ExerciseItem = ({ title, score, timestamp, color, isListening }) => (
-  <motion.div 
+  <motion.div
     whileHover={{ scale: 1.02 }}
     className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm mb-2"
   >
@@ -118,7 +122,7 @@ const ExerciseItem = ({ title, score, timestamp, color, isListening }) => (
 
 // Badge Component
 const Badge = ({ icon: Icon, title, description, color }) => (
-  <motion.div 
+  <motion.div
     whileHover={{ scale: 1.05 }}
     className={`${color} p-4 rounded-xl text-white flex items-center space-x-3`}
   >
@@ -131,154 +135,236 @@ const Badge = ({ icon: Icon, title, description, color }) => (
 );
 
 const LanguageProgress = () => {
-  const [selectedSkill, setSelectedSkill] = useState('all');
+  const [selectedSkill, setSelectedSkill] = useState("all");
   const [readingProgress, setReadingProgress] = useState(0);
   const [readingHistory, setReadingHistory] = useState([]);
   const [listeningProgress, setListeningProgress] = useState(0);
   const [listeningHistory, setListeningHistory] = useState([]);
   const [writingProgress, setWritingProgress] = useState(0);
   const [writingHistory, setWritingHistory] = useState([]);
-
-  const predefinedExercises = {
-    speaking: [
-      { title: "Pronunciation Test", score: 82, timestamp: "Today, 11:30 AM" },
-      { title: "Conversation Practice", score: 90, timestamp: "Yesterday, 2:00 PM" },
-    ],
-  };
+  const [speakingProgress, setSpeakingProgress] = useState(0);
+  const [speakingHistory, setSpeakingHistory] = useState([]);
 
   const activeTimeData = [
-    { day: 'Mon', minutes: 45 },
-    { day: 'Tue', minutes: 60 },
-    { day: 'Wed', minutes: 30 },
-    { day: 'Thu', minutes: 75 },
-    { day: 'Fri', minutes: 50 },
-    { day: 'Sat', minutes: 40 },
-    { day: 'Sun', minutes: 55 },
+    { day: "Mon", minutes: 45 },
+    { day: "Tue", minutes: 60 },
+    { day: "Wed", minutes: 30 },
+    { day: "Thu", minutes: 75 },
+    { day: "Fri", minutes: 50 },
+    { day: "Sat", minutes: 40 },
+    { day: "Sun", minutes: 55 },
   ];
 
   // Fetch reading, listening, and writing progress and history from the backend
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem('token'); // Assuming you're using tokens for authentication
+      const token = localStorage.getItem("token"); // Assuming you're using tokens for authentication
 
       // Fetch reading progress
       try {
-        const progressResponse = await fetch('http://localhost:3000/reading/progress', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const progressResponse = await fetch(
+          "http://localhost:3000/reading/progress",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (progressResponse.ok) {
           const progressData = await progressResponse.json();
           setReadingProgress(progressData.readingProgress);
         } else {
-          console.error('Failed to fetch reading progress:', progressResponse.statusText);
+          console.error(
+            "Failed to fetch reading progress:",
+            progressResponse.statusText
+          );
         }
       } catch (error) {
-        console.error('Error fetching reading progress:', error);
+        console.error("Error fetching reading progress:", error);
       }
 
       // Fetch reading history
       try {
-        const historyResponse = await fetch('http://localhost:3000/reading/history', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const historyResponse = await fetch(
+          "http://localhost:3000/reading/history",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (historyResponse.ok) {
           const historyData = await historyResponse.json();
           setReadingHistory(historyData);
         } else {
-          console.error('Failed to fetch reading history:', historyResponse.statusText);
+          console.error(
+            "Failed to fetch reading history:",
+            historyResponse.statusText
+          );
         }
       } catch (error) {
-        console.error('Error fetching reading history:', error);
+        console.error("Error fetching reading history:", error);
       }
 
       // Fetch listening progress
       try {
-        const listeningResponse = await fetch(`http://localhost:3000/listening/progress`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const listeningResponse = await fetch(
+          `http://localhost:3000/listening/progress`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (listeningResponse.ok) {
           const listeningData = await listeningResponse.json();
           setListeningProgress(listeningData.listeningProgress);
         } else {
-          console.error('Failed to fetch listening progress:', listeningResponse.statusText);
+          console.error(
+            "Failed to fetch listening progress:",
+            listeningResponse.statusText
+          );
         }
       } catch (error) {
-        console.error('Error fetching listening progress:', error);
+        console.error("Error fetching listening progress:", error);
       }
 
       // Fetch listening history
       try {
-        const response = await fetch('http://localhost:3000/listening/history', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-  
+        const response = await fetch(
+          "http://localhost:3000/listening/history",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
         if (response.ok) {
           const listeningHistoryData = await response.json();
           setListeningHistory(listeningHistoryData);
         } else {
-          console.error('Failed to fetch listening history:', response.statusText);
+          console.error(
+            "Failed to fetch listening history:",
+            response.statusText
+          );
         }
       } catch (error) {
-        console.error('Error fetching listening history:', error);
+        console.error("Error fetching listening history:", error);
       }
 
       // Fetch writing progress
       try {
-        const writingResponse = await fetch('http://localhost:3000/writing/progress', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const writingResponse = await fetch(
+          "http://localhost:3000/writing/progress",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (writingResponse.ok) {
           const writingData = await writingResponse.json();
           setWritingProgress(writingData.writingProgress);
         } else {
-          console.error('Failed to fetch writing progress:', writingResponse.statusText);
+          console.error(
+            "Failed to fetch writing progress:",
+            writingResponse.statusText
+          );
         }
       } catch (error) {
-        console.error('Error fetching writing progress:', error);
+        console.error("Error fetching writing progress:", error);
+      }
+
+      // Fetch speaking progress
+      try {
+        const speakingResponse = await fetch(
+          "http://localhost:3000/speaking/progress",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (speakingResponse.ok) {
+          const speakingData = await speakingResponse.json();
+          setSpeakingProgress(speakingData.speakingProgress);
+        } else {
+          console.error(
+            "Failed to fetch speaking progress:",
+            speakingResponse.statusText
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching speaking progress:", error);
       }
 
       // Fetch writing history
       try {
-        const writingHistoryResponse = await fetch('http://localhost:3000/writing/history', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const writingHistoryResponse = await fetch(
+          "http://localhost:3000/writing/history",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (writingHistoryResponse.ok) {
           const writingHistoryData = await writingHistoryResponse.json();
           setWritingHistory(writingHistoryData);
         } else {
-          console.error('Failed to fetch writing history:', writingHistoryResponse.statusText);
+          console.error(
+            "Failed to fetch writing history:",
+            writingHistoryResponse.statusText
+          );
         }
       } catch (error) {
-        console.error('Error fetching writing history:', error);
+        console.error("Error fetching writing history:", error);
+      }
+    };
+
+    // Fetch Speaking History
+    const speakingHistoryResponse = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/speaking/history", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const speakingHistoryData = await response.json();
+          setSpeakingHistory(speakingHistoryData);
+        } else {
+          console.error(
+            "Failed to fetch speaking history:",
+            response.statusText
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching speaking history:", error);
       }
     };
 
@@ -288,20 +374,21 @@ const LanguageProgress = () => {
   // Function to determine which exercises to display based on selected skill
   const getExercisesToDisplay = () => {
     switch (selectedSkill) {
-      case 'all':
+      case "all":
         return [
-          ...readingHistory.map(item => ({ ...item, type: 'reading' })),
-          ...listeningHistory.map(item => ({ ...item, type: 'listening' })),
-          ...writingHistory.map(item => ({ ...item, type: 'writing' }))
+          ...readingHistory.map((item) => ({ ...item, type: "reading" })),
+          ...listeningHistory.map((item) => ({ ...item, type: "listening" })),
+          ...writingHistory.map((item) => ({ ...item, type: "writing" })),
+          ...speakingHistory.map((item) => ({ ...item, type: "speaking" })),
         ];
-      case 'reading':
-        return readingHistory.map(item => ({ ...item, type: 'reading' }));
-      case 'writing':
-        return writingHistory.map(item => ({ ...item, type: 'writing' }));
-      case 'speaking':
-        return predefinedExercises.speaking.map(item => ({ ...item, type: 'speaking' }));
-      case 'listening':
-        return listeningHistory.map(item => ({ ...item, type: 'listening' }));
+      case "reading":
+        return readingHistory.map((item) => ({ ...item, type: "reading" }));
+      case "writing":
+        return writingHistory.map((item) => ({ ...item, type: "writing" }));
+      case "speaking":
+        return speakingHistory.map((item) => ({ ...item, type: "speaking" }));
+      case "listening":
+        return listeningHistory.map((item) => ({ ...item, type: "listening" }));
       default:
         return [];
     }
@@ -309,19 +396,25 @@ const LanguageProgress = () => {
 
   // Function to determine appropriate color based on exercise type
   const getExerciseColor = (exercise) => {
-    if (exercise.type === 'reading') return "bg-blue-500";
-    if (exercise.type === 'listening') return "bg-purple-500";
-    if (exercise.type === 'writing') return "bg-green-500";
-    if (exercise.type === 'speaking') return "bg-yellow-500";
+    if (exercise.type === "reading") return "bg-blue-500";
+    if (exercise.type === "listening") return "bg-purple-500";
+    if (exercise.type === "writing") return "bg-green-500";
+    if (exercise.type === "speaking") return "bg-yellow-500";
     return "bg-blue-500"; // Default color
   };
 
   // Function to get the appropriate title for exercise items
   const getExerciseTitle = (exercise) => {
-    if (exercise.type === 'reading') return exercise.passageId || "Reading Exercise";
-    if (exercise.type === 'listening') return exercise.audioId || "Listening Exercise";
-    if (exercise.type === 'writing') return `Prompt ${exercise.promptId}` || "Writing Exercise";
-    if (exercise.type === 'speaking') return exercise.title || "Speaking Exercise";
+    if (exercise.type === "reading")
+      return exercise.passageId || "Reading Exercise";
+    if (exercise.type === "listening")
+      return (
+        `${exercise.passageId} - ${exercise.title}` || "Listening Exercise"
+      );
+    if (exercise.type === "writing")
+      return `${exercise.promptId} - ${exercise.prompt}` || "Writing Exercise";
+    if (exercise.type === "speaking")
+      return exercise.content_id || "Speaking Exercise";
     return "Exercise";
   };
 
@@ -329,8 +422,10 @@ const LanguageProgress = () => {
     <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-100">
       <Sidebar />
       <div className="w-full mx-auto ml-6 mr-6 my-6 space-y-6">
-        <h1 className="text-3xl font-bold text-gray-800 text-center mb-8">Language Learning Progress</h1>
-        
+        <h1 className="text-3xl font-bold text-gray-800 text-center mb-8">
+          Language Learning Progress
+        </h1>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Skill Progress */}
           <motion.div
@@ -338,11 +433,29 @@ const LanguageProgress = () => {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-2xl p-6 shadow-md"
           >
-            <h3 className="text-gray-600 font-medium mb-4 text-lg">Skill Progress</h3>
-            <SkillProgress skill="Reading" progress={readingProgress} color="bg-blue-500" />
-            <SkillProgress skill="Writing" progress={writingProgress} color="bg-green-500" />
-            <SkillProgress skill="Speaking" progress={65} color="bg-yellow-500" />
-            <SkillProgress skill="Listening" progress={listeningProgress} color="bg-purple-500" />
+            <h3 className="text-gray-600 font-medium mb-4 text-lg">
+              Skill Progress
+            </h3>
+            <SkillProgress
+              skill="Reading"
+              progress={readingProgress}
+              color="bg-blue-500"
+            />
+            <SkillProgress
+              skill="Writing"
+              progress={writingProgress}
+              color="bg-green-500"
+            />
+            <SkillProgress
+              skill="Speaking"
+              progress={speakingProgress}
+              color="bg-yellow-500"
+            />
+            <SkillProgress
+              skill="Listening"
+              progress={listeningProgress}
+              color="bg-purple-500"
+            />
           </motion.div>
 
           {/* Average Performance */}
@@ -356,40 +469,62 @@ const LanguageProgress = () => {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-2xl p-6 shadow-md"
           >
-            <h3 className="text-gray-600 font-medium mb-4 text-lg">Exercise History</h3>
+            <h3 className="text-gray-600 font-medium mb-4 text-lg">
+              Exercise History
+            </h3>
             <div className="flex space-x-4 mb-4 border-b">
-              <button 
-                onClick={() => setSelectedSkill('all')}
-                className={`pb-2 ${selectedSkill === 'all' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+              <button
+                onClick={() => setSelectedSkill("all")}
+                className={`pb-2 ${
+                  selectedSkill === "all"
+                    ? "text-blue-500 border-b-2 border-blue-500"
+                    : "text-gray-500"
+                }`}
               >
                 All
               </button>
               <button
-                onClick={() => setSelectedSkill('reading')}
-                className={`pb-2 capitalize ${selectedSkill === 'reading' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+                onClick={() => setSelectedSkill("reading")}
+                className={`pb-2 capitalize ${
+                  selectedSkill === "reading"
+                    ? "text-blue-500 border-b-2 border-blue-500"
+                    : "text-gray-500"
+                }`}
               >
                 Reading
               </button>
               <button
-                onClick={() => setSelectedSkill('writing')}
-                className={`pb-2 capitalize ${selectedSkill === 'writing' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+                onClick={() => setSelectedSkill("writing")}
+                className={`pb-2 capitalize ${
+                  selectedSkill === "writing"
+                    ? "text-blue-500 border-b-2 border-blue-500"
+                    : "text-gray-500"
+                }`}
               >
                 Writing
               </button>
               <button
-                onClick={() => setSelectedSkill('speaking')}
-                className={`pb-2 capitalize ${selectedSkill === 'speaking' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+                onClick={() => setSelectedSkill("speaking")}
+                className={`pb-2 capitalize ${
+                  selectedSkill === "speaking"
+                    ? "text-blue-500 border-b-2 border-blue-500"
+                    : "text-gray-500"
+                }`}
               >
                 Speaking
               </button>
               <button
-                onClick={() => setSelectedSkill('listening')}
-                className={`pb-2 capitalize ${selectedSkill === 'listening' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+                onClick={() => setSelectedSkill("listening")}
+                className={`pb-2 capitalize ${
+                  selectedSkill === "listening"
+                    ? "text-blue-500 border-b-2 border-blue-500"
+                    : "text-gray-500"
+                }`}
               >
                 Listening
               </button>
             </div>
-            
+
             <div className="space-y-2">
               {getExercisesToDisplay().map((exercise, index) => (
                 <ExerciseItem
@@ -398,7 +533,7 @@ const LanguageProgress = () => {
                   score={exercise.score}
                   timestamp={exercise.timestamp}
                   color={getExerciseColor(exercise)}
-                  isListening={exercise.type === 'listening'}
+                  isListening={exercise.type === "listening"}
                 />
               ))}
             </div>
@@ -411,17 +546,19 @@ const LanguageProgress = () => {
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-2xl p-6 shadow-md"
             >
-              <h3 className="text-gray-600 font-medium mb-4 text-lg">Active Time</h3>
+              <h3 className="text-gray-600 font-medium mb-4 text-lg">
+                Active Time
+              </h3>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={activeTimeData}>
                   <XAxis dataKey="day" />
                   <YAxis />
-                  <Line 
-                    type="monotone" 
-                    dataKey="minutes" 
-                    stroke="#6366f1" 
+                  <Line
+                    type="monotone"
+                    dataKey="minutes"
+                    stroke="#6366f1"
                     strokeWidth={2}
-                    dot={{ r: 4, fill: '#6366f1' }}
+                    dot={{ r: 4, fill: "#6366f1" }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -433,21 +570,23 @@ const LanguageProgress = () => {
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-2xl p-6 shadow-md"
             >
-              <h3 className="text-gray-600 font-medium mb-4 text-lg">Earned Badges</h3>
+              <h3 className="text-gray-600 font-medium mb-4 text-lg">
+                Earned Badges
+              </h3>
               <div className="space-y-3">
-                <Badge 
+                <Badge
                   icon={Trophy}
                   title="Grammar Master"
                   description="Completed 50 grammar exercises"
                   color="bg-yellow-500"
                 />
-                <Badge 
+                <Badge
                   icon={Star}
                   title="Vocabulary Expert"
                   description="Learned 500 new words"
                   color="bg-purple-500"
                 />
-                <Badge 
+                <Badge
                   icon={Medal}
                   title="Speaking Star"
                   description="Perfect pronunciation streak"

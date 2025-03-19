@@ -22,7 +22,8 @@ const AzureSpeechAssessment = () => {
   );
   const [region, setRegion] = useState("centralindia");
   const [language, setLanguage] = useState("en-us");
-  const [referenceText, setReferenceText] = useState("Good morning.");
+  const [referenceText, setReferenceText] = useState("Good Night");
+  const [contentId, setContentId] = useState(null);
   const [recordingStatus, setRecordingStatus] = useState("Not recording");
   const [results, setResults] = useState(
     "Results will appear here after processing."
@@ -36,6 +37,36 @@ const AzureSpeechAssessment = () => {
   const [text, setText] = useState("");
   const recognitionRef = useRef(null);
   const mediaRecorderRef = useRef(null);
+
+  // Fetch a random prompt when the page loads
+  useEffect(() => {
+    const fetchPrompt = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:3000/speaking/random", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch prompt");
+        }
+
+        const data = await response.json();
+        setReferenceText(data.content);
+        setContentId(data.content_id);
+      } catch (error) {
+        console.error("Error fetching prompt:", error);
+        alert("Unable to load prompt. Please try again later.");
+        router.push("/dashboard");
+      }
+    };
+
+    fetchPrompt();
+  }, [router]);
 
   useEffect(() => {
     setIsRecording(false);
@@ -226,6 +257,21 @@ const AzureSpeechAssessment = () => {
           PronScore: nBest.PronScore || 0,
         };
 
+        console.log("contentId", contentId);
+        // Convert scores object to an array before sending
+        const scoresArray = Object.values(extractedScores);
+
+        // Send extracted scores to backend
+        await fetch("http://localhost:3000/speaking/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ contentId, scores: scoresArray }),
+        });
+
+        console.log("Azure API response:", result);
         const resultText = JSON.stringify(result, null, 2);
         setResults(extractedScores);
       } else {

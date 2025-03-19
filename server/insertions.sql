@@ -795,40 +795,200 @@ VALUES
     );
 
 -- Continue with Fill-in-the-Blank Questions
-INSERT INTO FillInTheBlanksQuestions (passage_id, question_text, correct_answer) 
-VALUES 
+INSERT INTO
+    FillInTheBlanksQuestions (passage_id, question_text, correct_answer)
+VALUES
     -- My First Day at School (B101)
-    ('B101', 'I wore a new _______ on my first day at school.', 'uniform'),
-    ('B101', 'The teacher welcomed us _______ and introduced us to the classroom.', 'warmly'),
-    ('B101', 'I saw colorful _______ on the walls and small desks arranged neatly.', 'posters'),
-    ('B101', 'We sang songs and played _______ to get to know each other.', 'games'),
-    ('B101', 'I made a new friend named _______.', 'Sam'),
-
+    (
+        'B101',
+        'I wore a new _______ on my first day at school.',
+        'uniform'
+    ),
+    (
+        'B101',
+        'The teacher welcomed us _______ and introduced us to the classroom.',
+        'warmly'
+    ),
+    (
+        'B101',
+        'I saw colorful _______ on the walls and small desks arranged neatly.',
+        'posters'
+    ),
+    (
+        'B101',
+        'We sang songs and played _______ to get to know each other.',
+        'games'
+    ),
+    (
+        'B101',
+        'I made a new friend named _______.',
+        'Sam'
+    ),
     -- A Trip to the Zoo (B102)
-    ('B102', 'Last weekend, I went to the _______ with my family.', 'zoo'),
-    ('B102', 'The lion _______ loudly, and the monkeys jumped from tree to tree.', 'roared'),
-    ('B102', 'We saw a big _______ coiled up and sleeping in a glass cage.', 'snake'),
-    ('B102', 'I fed some _______ and took many pictures.', 'birds'),
-    ('B102', 'It was a wonderful experience, and I learned a lot about _______.', 'animals'),
-
+    (
+        'B102',
+        'Last weekend, I went to the _______ with my family.',
+        'zoo'
+    ),
+    (
+        'B102',
+        'The lion _______ loudly, and the monkeys jumped from tree to tree.',
+        'roared'
+    ),
+    (
+        'B102',
+        'We saw a big _______ coiled up and sleeping in a glass cage.',
+        'snake'
+    ),
+    (
+        'B102',
+        'I fed some _______ and took many pictures.',
+        'birds'
+    ),
+    (
+        'B102',
+        'It was a wonderful experience, and I learned a lot about _______.',
+        'animals'
+    ),
     -- The Cat and the Mouse (B103)
-    ('B103', 'The playful _______ loved to chase a tiny mouse around the house.', 'cat'),
-    ('B103', 'Every morning, the cat would hide behind the _______ waiting for the mouse.', 'door'),
-    ('B103', 'The mouse was very _______ and always found ways to escape.', 'clever'),
-    ('B103', 'One day, the mouse ran up a chair, jumped onto the _______ and hid inside a bowl.', 'table'),
-    ('B103', 'The cat looked everywhere but couldn''t _______ it.', 'find'),
-
+    (
+        'B103',
+        'The playful _______ loved to chase a tiny mouse around the house.',
+        'cat'
+    ),
+    (
+        'B103',
+        'Every morning, the cat would hide behind the _______ waiting for the mouse.',
+        'door'
+    ),
+    (
+        'B103',
+        'The mouse was very _______ and always found ways to escape.',
+        'clever'
+    ),
+    (
+        'B103',
+        'One day, the mouse ran up a chair, jumped onto the _______ and hid inside a bowl.',
+        'table'
+    ),
+    (
+        'B103',
+        'The cat looked everywhere but couldn''t _______ it.',
+        'find'
+    ),
     -- My Favorite Toy (B104)
-    ('B104', 'My favorite toy is a _______ car.', 'red'),
-    ('B104', 'It has shiny _______ and makes a loud sound when I push it.', 'wheels'),
-    ('B104', 'I got it as a gift from my _______ on my birthday.', 'uncle'),
-    ('B104', 'Sometimes, I imagine that I am driving the car on a big _______ track.', 'race'),
-    ('B104', 'I love watching the car _______ around with a small light blinking.', 'zoom'),
-
+    (
+        'B104',
+        'My favorite toy is a _______ car.',
+        'red'
+    ),
+    (
+        'B104',
+        'It has shiny _______ and makes a loud sound when I push it.',
+        'wheels'
+    ),
+    (
+        'B104',
+        'I got it as a gift from my _______ on my birthday.',
+        'uncle'
+    ),
+    (
+        'B104',
+        'Sometimes, I imagine that I am driving the car on a big _______ track.',
+        'race'
+    ),
+    (
+        'B104',
+        'I love watching the car _______ around with a small light blinking.',
+        'zoom'
+    ),
     -- The Big Tree (B105)
-    ('B105', 'In our backyard, we have a big, _______ tree.', 'old'),
-    ('B105', 'Birds come every morning and _______ on its branches.', 'sing'),
-    ('B105', 'When the wind blows, the tree''s leaves make a _______ sound.', 'rustling'),
-    ('B105', 'In summer, we sit under the tree for _______.', 'shade'),
-    ('B105', 'Sometimes, my friends and I _______ it to pick fruits.', 'climb');
+    (
+        'B105',
+        'In our backyard, we have a big, _______ tree.',
+        'old'
+    ),
+    (
+        'B105',
+        'Birds come every morning and _______ on its branches.',
+        'sing'
+    ),
+    (
+        'B105',
+        'When the wind blows, the tree''s leaves make a _______ sound.',
+        'rustling'
+    ),
+    (
+        'B105',
+        'In summer, we sit under the tree for _______.',
+        'shade'
+    ),
+    (
+        'B105',
+        'Sometimes, my friends and I _______ it to pick fruits.',
+        'climb'
+    );
 
+INSERT INTO
+    Speaking_Content (content_id, title, content, difficulty)
+VALUES
+    (
+        'B01',
+        'Greeting Someone',
+        'Good morning.',
+        'Beginner'
+    ),
+    (
+        'B02',
+        'Introducing Yourself',
+        'My name is John.',
+        'Beginner'
+    ),
+    (
+        'B03',
+        'Asking for Help',
+        'Can you help me?',
+        'Beginner'
+    ),
+    (
+        'B04',
+        'Saying Thank You',
+        'Thank you very much.',
+        'Beginner'
+    ),
+    (
+        'B05',
+        'Talking About Weather',
+        'It is sunny today.',
+        'Beginner'
+    ),
+    (
+        'B06',
+        'Ordering a Drink',
+        'I want a coffee.',
+        'Beginner'
+    ),
+    (
+        'B07',
+        'Expressing Happiness',
+        'I am very happy.',
+        'Beginner'
+    ),
+    (
+        'B08',
+        'Talking About Age',
+        'I am 25 years old.',
+        'Beginner'
+    ),
+    (
+        'B09',
+        'Making a Request',
+        'Please give me the book.',
+        'Beginner'
+    ),
+    (
+        'B10',
+        'Saying Goodbye',
+        'See you later.',
+        'Beginner'
+    );

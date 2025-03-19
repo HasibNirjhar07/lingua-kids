@@ -1,5 +1,4 @@
 const pool = require("../db");
-const { analyzeSpeech } = require("./analyzeSpeech");
 
 // Fetch a random speaking content for the user
 const getRandomSpeakingContent = async (req, res) => {
@@ -74,9 +73,12 @@ const getRandomSpeakingContent = async (req, res) => {
   }
 };
 
-// Analyze user speech input
-const analyzeUserSpeech = async (req, res) => {
-  const { scores } = req.body;
+const submitSpeakingScore = async (req, res) => {
+  const { contentId, scores } = req.body;
+  const username = req.user.username;
+
+  console.log("Content ID:", contentId);
+  console.log("Scores received:", scores);
 
   if (!scores || !Array.isArray(scores) || scores.length === 0) {
     return res.status(400).json({ error: "No valid scores provided." });
@@ -84,20 +86,11 @@ const analyzeUserSpeech = async (req, res) => {
 
   try {
     // Calculate the final score as the average of multiple parameters
-    const cumulativeScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+    const finalScore = Math.ceil(
+      scores.reduce((a, b) => a + b, 0) / scores.length
+    );
+    console.log("Final score:", finalScore);
 
-    res.status(200).json({ cumulativeScore });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// Submit user's speaking score
-const submitSpeakingScore = async (req, res) => {
-  const { contentId, score } = req.body;
-  const username = req.user.username;
-
-  try {
     // Fetch existing progress for the content
     const existingProgressResult = await pool.query(
       "SELECT score FROM Speaking_Progress WHERE username = $1 AND content_id = $2",
@@ -107,19 +100,19 @@ const submitSpeakingScore = async (req, res) => {
     const existingScore = existingProgressResult.rows[0]?.score;
 
     // Only update if the new score is better
-    if (!existingScore || score > existingScore) {
+    if (!existingScore || finalScore > existingScore) {
       if (existingScore) {
         await pool.query(
           `UPDATE Speaking_Progress 
-                     SET score = $1, timestamp = CURRENT_TIMESTAMP 
-                     WHERE username = $2 AND content_id = $3`,
-          [score, username, contentId]
+             SET score = $1, timestamp = CURRENT_TIMESTAMP 
+             WHERE username = $2 AND content_id = $3`,
+          [finalScore, username, contentId]
         );
       } else {
         await pool.query(
           `INSERT INTO Speaking_Progress (username, content_id, score, timestamp)
-                     VALUES ($1, $2, $3, CURRENT_TIMESTAMP)`,
-          [username, contentId, score]
+             VALUES ($1, $2, $3, CURRENT_TIMESTAMP)`,
+          [username, contentId, finalScore]
         );
       }
     }
@@ -196,7 +189,6 @@ const getSpeakingHistory = async (req, res) => {
 
 module.exports = {
   getRandomSpeakingContent,
-  analyzeUserSpeech,
   submitSpeakingScore,
   getSpeakingProgress,
   getSpeakingHistory,
