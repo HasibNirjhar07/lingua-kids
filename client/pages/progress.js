@@ -331,7 +331,7 @@ const LanguageProgress = () => {
 
         if (speakingResponse.ok) {
           const speakingData = await speakingResponse.json();
-          setSpeakingProgress(speakingData.speakingProgress);
+          setSpeakingProgress(speakingData.progress);
         } else {
           console.error(
             "Failed to fetch speaking progress:",
@@ -410,12 +410,12 @@ const LanguageProgress = () => {
       return exercise.passageId || "Reading Exercise";
     if (exercise.type === "listening")
       return (
-        `${exercise.passageId} - ${exercise.title}` || "Listening Exercise"
+        `${exercise.passageId}` || "Listening Exercise"
       );
     if (exercise.type === "writing")
-      return `${exercise.promptId} - ${exercise.prompt}` || "Writing Exercise";
+      return `${exercise.promptId}` || "Writing Exercise";
     if (exercise.type === "speaking")
-      return exercise.content_id || "Speaking Exercise";
+      return exercise.title || exercise.contentId || "Speaking Exercise";
     return "Exercise";
   };
 
